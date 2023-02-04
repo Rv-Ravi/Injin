@@ -1,6 +1,7 @@
 #ifndef COREINIT_H
 #define COREINIT_H
 
+
 #ifdef INJIN_DLL
 	#define NJIN __declspec(dllexport)
 #else

@@ -2,12 +2,16 @@
 #define SAMPLE_H
 
 #include "coreInit.h"
-
+#include "../Windows/WindowGL.h"
+#include <memory>
 namespace engin {
 	class NJIN Application
 	{
+	private:
+		std::unique_ptr <engin::WindowGL> m_winGl;
+
 	public:
-		Application();
+		Application(winProperties winProp = winProperties());
 		virtual ~Application();
 
 		//methods

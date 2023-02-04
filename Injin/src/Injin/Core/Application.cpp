@@ -3,9 +3,9 @@
 
 
 
-
-engin::Application::Application()
+engin::Application::Application(winProperties winProp)
 {
+	m_winGl = std::make_unique<WindowGL>(winProp);
 }
 
 engin::Application::~Application()
@@ -14,5 +14,9 @@ engin::Application::~Application()
 
 void engin::Application::runApp()
 {
-	while (1);
+
+	while (!m_winGl->isWinClose())
+	{
+		m_winGl->onUpdate();
+	}
 }
