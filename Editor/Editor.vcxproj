@@ -89,9 +89,12 @@
     <ProjectReference Include="..\gameEngine\gameEngine.vcxproj">
       <Project>{7088a501-0cc4-4d1d-b122-c234bc7639b5}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Injin\gameEngine.vcxproj">
+      <Project>{7088a501-0cc4-4d1d-b122-c234bc7639b5}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\EditorApp.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
