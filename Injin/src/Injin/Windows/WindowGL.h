@@ -1,7 +1,7 @@
 #ifndef WINDOWGL_H
 #define WINDOWGL_H
 
-#include <glad/glad.h>
+
 #include <GLFW/glfw3.h>
 #include <array>
 
@@ -42,10 +42,11 @@ namespace engin
 		std::array<double,2> getCurPos();
 
 		bool isWinClose() const;
+		void setCallbacks();
 
 	private:
 		void Init(winProperties& winProp);
-		void setCallbacks();
+		
 
 
 	};

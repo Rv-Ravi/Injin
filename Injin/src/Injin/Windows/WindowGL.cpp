@@ -1,3 +1,4 @@
+#include <glad/glad.h>
 #include "WindowGL.h"
 
 #include <iostream>
@@ -46,7 +47,9 @@ namespace engin
 	void WindowGL::setCallbacks()
 	{
 
-
+		glfwSetFramebufferSizeCallback(m_window, [](GLFWwindow* window, int32_t width, int32_t height) {
+				glViewport(0, 0, width, height);
+			});
 
 	}
 	void WindowGL::onUpdate()

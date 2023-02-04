@@ -2,6 +2,7 @@
 #define SAMPLE_H
 
 #include "coreInit.h"
+#include "../glContext/graphicsInit.h"
 #include "../Windows/WindowGL.h"
 #include <memory>
 namespace engin {
