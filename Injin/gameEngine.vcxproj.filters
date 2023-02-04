@@ -1146,6 +1146,9 @@
     <ClInclude Include="Dependencies\include\ImGui\imstb_truetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Injin\ImGui\ImguiLayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Injin\Core\Application.cpp">
@@ -1182,6 +1185,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Injin\glContext\graphicsInit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Injin\ImGui\ImguiLayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
