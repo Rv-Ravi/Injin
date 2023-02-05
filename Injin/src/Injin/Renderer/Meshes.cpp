@@ -13,11 +13,55 @@ engin::Meshes::Meshes(const std::vector<vertexData>& vData, const std::vector<ui
 
 }
 
+engin::Meshes::Meshes(const Meshes& mesh) noexcept
+{
+	m_VAO = mesh.m_VAO;
+	m_VBO = mesh.m_VBO;
+	m_IBO = mesh.m_IBO;
+	vertexDataSize = mesh.vertexDataSize;
+	indexDataSize = mesh.indexDataSize;
+}
+
+engin::Meshes::Meshes(Meshes&& mesh) noexcept
+{
+	m_VAO = std::move(mesh.m_VAO);
+	m_VBO = std::move(mesh.m_VBO);
+	m_IBO = std::move(mesh.m_IBO);
+	vertexDataSize = std::move(mesh.vertexDataSize);
+	indexDataSize =  std::move(mesh.indexDataSize);
+}
+
 engin::Meshes::~Meshes()
 {
 	glDeleteVertexArrays(1, &m_VAO);
 	glDeleteBuffers(1, &m_VBO);
 	glDeleteBuffers(1, &m_IBO);
+}
+
+engin::Meshes& engin::Meshes::operator=(const Meshes& mesh) noexcept
+{
+	if (&mesh != this)
+	{
+		m_VAO = mesh.m_VAO;
+		m_VBO = mesh.m_VBO;
+		m_IBO = mesh.m_IBO;
+		vertexDataSize = mesh.vertexDataSize;
+		indexDataSize = mesh.indexDataSize;
+	}
+	return *this;
+}
+
+engin::Meshes& engin::Meshes::operator=(Meshes&& mesh) noexcept
+{
+	if (&mesh != this)
+	{
+		m_VAO = std::move(mesh.m_VAO);
+		m_VBO = std::move(mesh.m_VBO);
+		m_IBO = std::move(mesh.m_IBO);
+		vertexDataSize = std::move(mesh.vertexDataSize);
+		indexDataSize = std::move(mesh.indexDataSize);
+	}
+	return *this;
 }
 
 void engin::Meshes::bindVertexArray()

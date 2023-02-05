@@ -467,6 +467,7 @@
     <ClInclude Include="Dependencies\include\ImGui\imstb_truetype.h" />
     <ClInclude Include="Dependencies\include\KHR\khrplatform.h" />
     <ClInclude Include="Dependencies\include\stb\stb_image.h" />
+    <ClInclude Include="src\Injin\Core\TimeStamp.h" />
     <ClInclude Include="src\Injin\ImGui\ImguiLayer.h" />
     <ClInclude Include="src\Injin\Core\coreInit.h" />
     <ClInclude Include="src\Injin.h" />

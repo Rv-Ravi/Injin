@@ -24,8 +24,13 @@ namespace engin
 		size_t vertexDataSize, indexDataSize;
 	public:
 		Meshes(const std::vector<vertexData>& vData, const std::vector<uint32_t>& iData = {});
+		Meshes(const Meshes& mesh) noexcept;
+		Meshes(Meshes&& mesh)noexcept;
 		~Meshes();
 
+	//operators
+		Meshes& operator=(const Meshes& mesh)noexcept;
+		Meshes& operator=(Meshes&& mesh)noexcept;
 	//getters and setters
 	public:
 		uint32_t getVAO() const { return m_VAO; }

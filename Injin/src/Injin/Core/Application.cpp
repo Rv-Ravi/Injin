@@ -11,7 +11,7 @@ engin::Application::Application(winProperties winProp)
 	m_winGl->setCallbacks();
 
 	m_guiLayer = std::make_unique<engin::ImguiLayer>(m_winGl->getWindow());
-	
+	m_deltaTime = std::make_unique<engin::TimeStamp>();
 }
 
 engin::Application::~Application()
@@ -25,17 +25,30 @@ void engin::Application::runApp()
 
 	while (!m_winGl->isWinClose())
 	{
-		engin::grpicsInit::clrColrBuffr();
-		engin::grpicsInit::clrBuffr();
-
-		m_guiLayer->setNewFrame();
-
-		engin::grpicsInit::imGuiBg();
+		this->onUpdate();
 
 		mesh_1.drawMesh();
 
-		m_guiLayer->renderData();
+		this->imGuiUpdates();
 
 		m_winGl->onUpdate();
 	}
+}
+
+void engin::Application::onUpdate()
+{
+	m_deltaTime->update();
+	engin::grpicsInit::clrColrBuffr();
+	engin::grpicsInit::clrBuffr();
+
+
+}
+
+void engin::Application::imGuiUpdates()
+{
+	m_guiLayer->setNewFrame();
+
+	engin::grpicsInit::imGuiBg();
+
+	m_guiLayer->renderData();
 }
