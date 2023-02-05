@@ -472,6 +472,7 @@
     <ClInclude Include="src\Injin.h" />
     <ClInclude Include="src\Injin\Core\Application.h" />
     <ClInclude Include="src\Injin\glContext\graphicsInit.h" />
+    <ClInclude Include="src\Injin\Renderer\Meshes.h" />
     <ClInclude Include="src\Injin\Windows\WindowGL.h" />
   </ItemGroup>
   <ItemGroup>
@@ -487,6 +488,7 @@
     <ClCompile Include="src\Injin\Core\Application.cpp" />
     <ClCompile Include="src\Injin\Core\glad.c" />
     <ClCompile Include="src\Injin\glContext\graphicsInit.cpp" />
+    <ClCompile Include="src\Injin\Renderer\Meshes.cpp" />
     <ClCompile Include="src\Injin\Windows\WindowGL.cpp" />
   </ItemGroup>
   <ItemGroup>

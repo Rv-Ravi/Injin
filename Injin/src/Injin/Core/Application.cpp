@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "../Renderer/Meshes.h"
 #include <stdio.h>
 
 
@@ -6,7 +7,7 @@
 engin::Application::Application(winProperties winProp)
 {
 	m_winGl = std::make_unique<WindowGL>(winProp);
-	engin::grpicInit();
+	engin::grpicsInit::grpicInit();
 	m_winGl->setCallbacks();
 
 	m_guiLayer = std::make_unique<engin::ImguiLayer>(m_winGl->getWindow());
@@ -20,18 +21,18 @@ engin::Application::~Application()
 
 void engin::Application::runApp()
 {
-	float bgColor[4] = { 0 };
+	engin::Meshes mesh_1(engin::triangle);
 
 	while (!m_winGl->isWinClose())
 	{
-		engin::clrColrBuffr(bgColor[0], bgColor[1], bgColor[2], bgColor[3]);
-		engin::clrBuffr();
+		engin::grpicsInit::clrColrBuffr();
+		engin::grpicsInit::clrBuffr();
 
 		m_guiLayer->setNewFrame();
 
-		ImGui::Begin("Background color");
-		ImGui::ColorEdit4("clear color", bgColor);
-		ImGui::End();
+		engin::grpicsInit::imGuiBg();
+
+		mesh_1.drawMesh();
 
 		m_guiLayer->renderData();
 

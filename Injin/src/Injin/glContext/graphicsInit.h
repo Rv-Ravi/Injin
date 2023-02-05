@@ -3,13 +3,29 @@
 
 #include <glad/glad.h>
 #include "../Windows/WindowGL.h"
+#include "glm/glm.hpp"
 
 namespace engin
 {
+	extern uint16_t drawMode;
 
-	void clrBuffr();
-	void clrColrBuffr(float x, float y, float z, float a);
-	void grpicInit();
+	class grpicsInit {
+
+	public:
+		static glm::vec4 bgColor;
+	public:
+		grpicsInit();
+		~grpicsInit();
+
+	//methods
+	public:
+		static void clrBuffr();
+		static void clrColrBuffr();
+		static void grpicInit();
+		static void imGuiBg();
+	};
+
+
 
 }
 

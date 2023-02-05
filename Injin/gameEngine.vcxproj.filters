@@ -1149,6 +1149,9 @@
     <ClInclude Include="src\Injin\ImGui\ImguiLayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Injin\Renderer\Meshes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Injin\Core\Application.cpp">
@@ -1188,6 +1191,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Injin\ImGui\ImguiLayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Injin\Renderer\Meshes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
