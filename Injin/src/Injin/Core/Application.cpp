@@ -1,7 +1,7 @@
 #include "Application.h"
 #include "../Renderer/Meshes.h"
 #include <stdio.h>
-
+#include "../Renderer/ShaderProgram.h"
 
 
 engin::Application::Application(winProperties winProp)
@@ -21,13 +21,25 @@ engin::Application::~Application()
 
 void engin::Application::runApp()
 {
+	engin::ShaderProgram program("D:\\Coding\\GameEngine\\Injin\\Editor\\assets\\Shaders\\simpleObj.glsl");
+
+	glm::vec3 triColor = { 0.3f,0.f,0.f };
+
+	program.bindProgram();
+	program.setUniValuefV("uColor", triColor, 3);
+	program.setUniValueM("transMat", glm::mat4(1.f), 4);
+	program.setUniValueM("viewProj", glm::mat4(1.f), 4);
+	program.unbindProgram();
+
 	engin::Meshes mesh_1(engin::triangle);
 
 	while (!m_winGl->isWinClose())
 	{
 		this->onUpdate();
 
+		program.bindProgram();
 		mesh_1.drawMesh();
+		program.unbindProgram();
 
 		this->imGuiUpdates();
 
