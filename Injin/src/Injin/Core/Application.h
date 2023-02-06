@@ -5,7 +5,7 @@
 
 #include "coreInit.h"
 #include "../glContext/graphicsInit.h"
-#include "../Windows/WindowGL.h"
+#include "../Renderer/Camera.h"
 #include "../ImGui/ImguiLayer.h"
 #include <memory>
 #include "TimeStamp.h"
@@ -16,6 +16,7 @@ namespace engin {
 		std::unique_ptr <engin::WindowGL> m_winGl;
 		std::unique_ptr<engin::ImguiLayer> m_guiLayer;
 		std::unique_ptr<engin::TimeStamp> m_deltaTime;
+		std::unique_ptr<engin::Camera> m_camera;
 
 	public:
 		Application(winProperties winProp = winProperties());

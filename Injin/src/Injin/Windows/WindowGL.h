@@ -29,7 +29,7 @@ namespace engin
 		~WindowGL();
 
 		//getter and setter
-		GLFWwindow* getWindow() { return m_window; }
+		GLFWwindow* getWindow()const  { return m_window; }
 
 		//methods
 
@@ -37,9 +37,9 @@ namespace engin
 		void destryWin();
 		static void terminate();
 
-		uint16_t getKeyState(uint16_t key);
-		uint16_t getButtonState(uint16_t button);
-		std::array<double,2> getCurPos();
+		uint16_t getKeyState(uint16_t key) const;
+		uint16_t getButtonState(uint16_t button) const;
+		std::array<double,2> getCurPos() const;
 
 		bool isWinClose() const;
 		void setCallbacks();

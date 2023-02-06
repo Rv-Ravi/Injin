@@ -3,7 +3,7 @@
 
 
 uint16_t engin::drawMode = GL_TRIANGLES;
-glm::vec4 engin::grpicsInit::bgColor(0.f);
+
 
 
 engin::grpicsInit::grpicsInit()
@@ -20,7 +20,7 @@ void engin::grpicsInit::clrBuffr()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void engin::grpicsInit::clrColrBuffr()
+void engin::grpicsInit::clrColrBuffr(const glm::vec4& bgColor)
 {
 	glClearColor(bgColor.x, bgColor.y, bgColor.z, bgColor.a);
 }
@@ -34,9 +34,3 @@ void engin::grpicsInit::grpicInit()
 	}
 }
 
-void engin::grpicsInit::imGuiBg()
-{
-	ImGui::Begin("Background color");
-	ImGui::ColorEdit4("clear color", &bgColor.x);
-	ImGui::End();
-}

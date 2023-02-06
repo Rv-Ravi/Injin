@@ -65,15 +65,15 @@ namespace engin
 	{
 		glfwTerminate();
 	}
-	uint16_t WindowGL::getKeyState(uint16_t key)
+	uint16_t WindowGL::getKeyState(uint16_t key) const 
 	{
 		return glfwGetKey(m_window,key);
 	}
-	uint16_t WindowGL::getButtonState(uint16_t button)
+	uint16_t WindowGL::getButtonState(uint16_t button) const 
 	{
 		return glfwGetMouseButton(m_window,button);
 	}
-	std::array<double, 2> WindowGL::getCurPos()
+	std::array<double, 2> WindowGL::getCurPos() const 
 	{
 		double pos[2];
 		glfwGetCursorPos(m_window,&pos[0],&pos[1]);

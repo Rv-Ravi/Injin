@@ -12,7 +12,7 @@ namespace engin
 	class grpicsInit {
 
 	public:
-		static glm::vec4 bgColor;
+		
 	public:
 		grpicsInit();
 		~grpicsInit();
@@ -20,9 +20,8 @@ namespace engin
 	//methods
 	public:
 		static void clrBuffr();
-		static void clrColrBuffr();
+		static void clrColrBuffr(const glm::vec4& bgColor);
 		static void grpicInit();
-		static void imGuiBg();
 	};
 
 
