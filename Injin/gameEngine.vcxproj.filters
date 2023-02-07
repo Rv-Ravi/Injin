@@ -1161,6 +1161,9 @@
     <ClInclude Include="src\Injin\Renderer\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Injin\Renderer\Yentt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Injin\Core\Application.cpp">

@@ -8,6 +8,7 @@
 #include "../Renderer/Camera.h"
 #include "../ImGui/ImguiLayer.h"
 #include <memory>
+#include "../Renderer/Yentt.h"
 #include "TimeStamp.h"
 namespace engin {
 	class NJIN Application

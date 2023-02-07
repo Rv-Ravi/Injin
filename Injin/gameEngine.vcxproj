@@ -476,6 +476,7 @@
     <ClInclude Include="src\Injin\Renderer\Camera.h" />
     <ClInclude Include="src\Injin\Renderer\Meshes.h" />
     <ClInclude Include="src\Injin\Renderer\ShaderProgram.h" />
+    <ClInclude Include="src\Injin\Renderer\Yentt.h" />
     <ClInclude Include="src\Injin\Windows\WindowGL.h" />
   </ItemGroup>
   <ItemGroup>

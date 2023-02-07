@@ -35,7 +35,6 @@ void engin::Application::runApp()
 
 	engin::Meshes mesh_1(engin::triangle);
 
-	
 
 	while (!m_winGl->isWinClose())
 	{
