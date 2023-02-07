@@ -16,7 +16,7 @@ namespace engin {
 		std::unique_ptr <engin::WindowGL> m_winGl;
 		std::unique_ptr<engin::ImguiLayer> m_guiLayer;
 		std::unique_ptr<engin::TimeStamp> m_deltaTime;
-		std::unique_ptr<engin::Camera> m_camera;
+		engin::Camera* camera;
 
 	public:
 		Application(winProperties winProp = winProperties());
