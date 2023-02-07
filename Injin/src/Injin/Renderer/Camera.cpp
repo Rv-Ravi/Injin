@@ -137,16 +137,16 @@ namespace engin
 
 			if (!isMouInit)
 			{
-				m_lastX = curPos[0];
-				m_lastY = curPos[1];
+				m_lastX = (float)curPos[0];
+				m_lastY = (float)curPos[1];
 				isMouInit = true;
 			}
 
-			m_yaw += (m_lastX - curPos[0]) * dtime * 4.f;
-			m_pitch += (curPos[1] - m_lastY) * dtime * 4.f;
+			m_yaw += (m_lastX - (float)curPos[0]) * dtime * 4.f;
+			m_pitch += ((float)curPos[1] - m_lastY) * dtime * 4.f;
 
-			m_lastY = curPos[1];
-			m_lastX = curPos[0];
+			m_lastY = (float)curPos[1];
+			m_lastX = (float)curPos[0];
 
 			m_camZ.x = cos(glm::radians(m_pitch)) * sin(glm::radians(m_yaw));
 			m_camZ.y = sin(glm::radians(m_pitch));
