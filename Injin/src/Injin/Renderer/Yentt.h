@@ -75,8 +75,8 @@ namespace engin {
 	struct MaterialComponent : public Component
 	{
 		glm::vec3 m_materialColor;
-		MaterialComponent()
-			:Component(typeid(MaterialComponent).name()),m_materialColor(0.2f,0.2f,0.2f)
+		MaterialComponent(const glm::vec3& color = { 0.2f,0.2f,0.2f })
+			:Component(typeid(MaterialComponent).name()),m_materialColor(color)
 		{
 
 		}
@@ -94,7 +94,7 @@ namespace engin {
 	class Yentt {
 	private:
 		static Component* tempComp;
-
+		bool m_yenttState = false;
 
 	public:
 		std::vector<Component*> m_yenttComponents;
@@ -105,6 +105,14 @@ namespace engin {
 			addComponent<TransformComponent>();
 		}
 		~Yentt(){}
+
+		bool isStatic() const {
+			return m_yenttState;
+		}
+
+		void mkStatic(bool staticFlg = false) {
+			m_yenttState = staticFlg;
+		}
 
 		template<typename typ, typename... Args>
 		void addComponent(Args&&... args)

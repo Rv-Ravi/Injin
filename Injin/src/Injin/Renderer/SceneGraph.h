@@ -31,6 +31,8 @@ namespace engin {
 		void addCubeEntt();
 		void addTriangleEntt();
 
+		void addBase();
+
 		void sceneUpdate(engin::WindowGL& window,float dtime);
 		void drawScene(engin::WindowGL& window,float dtime);
 

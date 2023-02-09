@@ -11,6 +11,7 @@ engin::SceneGraph::SceneGraph()
 	program("D:\\Coding\\GameEngine\\Injin\\Editor\\assets\\Shaders\\simpleObj.glsl")
 {
 	processMesh();
+	addBase();
 	addTriangleEntt();
 	addCubeEntt();
 }
@@ -44,6 +45,18 @@ void engin::SceneGraph::addTriangleEntt()
 	m_enttList.emplace_back("Triangle");
 	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Triangle"));
 	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>();
+	currentYentt = &m_enttList[m_enttList.size() - 1];
+}
+
+void engin::SceneGraph::addBase()
+{
+	m_enttList.emplace_back("Base");
+	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Cube"));
+	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>();
+
+	auto compo = m_enttList[m_enttList.size() - 1].getComponent<TransformComponent>();
+	compo->m_scale = { 10.f,0.5f,10.f };
+
 	currentYentt = &m_enttList[m_enttList.size() - 1];
 }
 
