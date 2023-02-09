@@ -104,7 +104,7 @@ void engin::ShaderProgram::processShaderFile(const std::string& fileName)
 void engin::ShaderProgram::processShader(const engin::SHADERTYPE& shaderType, const char* shaderCode)
 {
 	uint32_t shader = glCreateShader(shadrTyp[uint16_t(shaderType)]);
-	int32_t srcLen = std::strlen(shaderCode);
+	int32_t srcLen = (int32_t)std::strlen(shaderCode);
 	glShaderSource(shader, 1, &shaderCode, &srcLen);
 	glCompileShader(shader);
 

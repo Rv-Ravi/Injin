@@ -1,7 +1,5 @@
 #include "Application.h"
-#include "../Renderer/Meshes.h"
 #include <stdio.h>
-#include "../Renderer/ShaderProgram.h"
 
 
 engin::Application::Application(winProperties winProp)
@@ -12,41 +10,26 @@ engin::Application::Application(winProperties winProp)
 
 	m_guiLayer = std::make_unique<engin::ImguiLayer>(m_winGl->getWindow());
 	m_deltaTime = std::make_unique<engin::TimeStamp>();
-	camera = new engin::PerspectiveCamera(glm::vec3( 0.f,0.f,3.f ));
+	m_sceneGraph = std::make_unique<engin::SceneGraph>();
 }
 
 engin::Application::~Application()
 {
 	m_guiLayer->imGuiExit();
-	delete camera;
 }
 
 void engin::Application::runApp()
 {
-	engin::ShaderProgram program("D:\\Coding\\GameEngine\\Injin\\Editor\\assets\\Shaders\\simpleObj.glsl");
-	
-	glm::vec3 triColor = { 0.3f,0.f,0.f };
-
-	program.bindProgram();
-	program.setUniValuefV("uColor", triColor, 3);
-	program.setUniValueM("transMat", glm::mat4(1.f), 4);
-	
-	program.unbindProgram();
-
-	engin::Meshes mesh_1(engin::triangle);
-
-
 	while (!m_winGl->isWinClose())
 	{
 		this->onUpdate();
 
-		program.bindProgram();
-		program.setUniValueM("viewProj", camera->getViewProjMat(), 4);
-		mesh_1.drawMesh();
-		program.unbindProgram();
+		m_sceneGraph->drawScene(*m_winGl.get(), m_deltaTime->getframTime());
 
 		this->imGuiUpdates();
-		camera->mvCam(*m_winGl, m_deltaTime->getframTime());
+
+
+		m_sceneGraph->sceneUpdate(*m_winGl.get(),m_deltaTime->getframTime());
 		m_winGl->onUpdate();
 	}
 }
@@ -62,7 +45,7 @@ void engin::Application::imGuiUpdates()
 {
 	m_guiLayer->setNewFrame();
 
-	camera->imGuiWindows();
+	m_sceneGraph->ImGuiWindows();
 
 	m_guiLayer->renderData();
 }

@@ -1,13 +1,14 @@
 #ifndef YENTT_H
 #define YENTT_H
 
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
 #include "../ImGui/ImguiLayer.h"
-#include <memory>
 #include <functional>
 #include <string>
+#include "Meshes.h"
 
 namespace engin {
 
@@ -44,31 +45,76 @@ namespace engin {
 
 		void ImGuiWindow()
 		{
-			ImGui::DragFloat3("Position", &m_position.x, 0.5f, 0.f, 100.f, "%.2f");
-			ImGui::DragFloat3("Position", &m_rotation.x, 0.5f, 0.f, 360.f, "%.2f");
-			ImGui::DragFloat3("Position", &m_scale.x, 0.5f, 1.f, 10.f, "%.2f");
+			ImGui::Text("Transform: \n");
+			ImGui::DragFloat3("Position", &m_position.x, 0.1f, -100.f, 100.f, "%.2f");
+			ImGui::DragFloat3("Rotation", &m_rotation.x, 0.1f, -360.f, 360.f, "%.2f");
+			ImGui::DragFloat3("Scale", &m_scale.x, 0.1f, 1.f, 10.f, "%.2f");
+		}
+	};
+
+	struct MeshComponent : public Component
+	{
+		engin::Meshes* m_meshData;
+
+		MeshComponent(engin::Meshes* mesh)
+			:Component(typeid(MeshComponent).name()),m_meshData(mesh)
+		{
+
+		}
+		~MeshComponent() {
+
+		}
+
+		void ImGuiWindow()
+		{
+			ImGui::Text("Mesh Component: \n");
+			ImGui::Text("Mesh : %s",m_meshData->m_meshName.c_str());
+		}
+	};
+
+	struct MaterialComponent : public Component
+	{
+		glm::vec3 m_materialColor;
+		MaterialComponent()
+			:Component(typeid(MaterialComponent).name()),m_materialColor(0.2f,0.2f,0.2f)
+		{
+
+		}
+		~MaterialComponent()
+		{
+
+		}
+		void ImGuiWindow()
+		{
+			ImGui::Text("Material Component: \n");
+			ImGui::ColorEdit3("Material Color",&m_materialColor.x);
 		}
 	};
 
 	class Yentt {
 	private:
-		std::vector<std::unique_ptr<Component>> m_yenttComponents;
 		static Component* tempComp;
 
 
 	public:
-		Yentt(){}
+		std::vector<Component*> m_yenttComponents;
+		std::string enttName;
+		Yentt(const std::string& name = "Entity")
+			:enttName(name)
+		{
+			addComponent<TransformComponent>();
+		}
 		~Yentt(){}
 
 		template<typename typ, typename... Args>
-		void addEntt(Args&&... args)
+		void addComponent(Args&&... args)
 		{
 			if(!hasComponent<typ>())
-				m_yenttComponents.push_back(std::make_unique<typ>(std::forward<Args>(args)...));
+				m_yenttComponents.push_back(new typ(std::forward<Args>(args)...));
 		}
 
 		template<typename typ>
-		typ* getEntt() {
+		typ* getComponent() {
 			if (hasComponent<typ>())
 			{	
 				return (typ*)tempComp;
@@ -81,7 +127,7 @@ namespace engin {
 		bool hasComponent()
 		{
 			auto iterator = std::find_if(m_yenttComponents.begin(), m_yenttComponents.end(),
-				[&](const std::unique_ptr<Component>& comp)->bool {
+				[&](Component* comp)->bool {
 					if (comp->m_compId == typeid(T).name())
 					return true;
 			return false;
@@ -89,7 +135,7 @@ namespace engin {
 			);
 			if (iterator != m_yenttComponents.end())
 			{
-				tempComp = iterator->get();
+				tempComp = *iterator;
 				return true;
 			}
 				
@@ -97,7 +143,6 @@ namespace engin {
 		}
 	};
 
-	Component* Yentt::tempComp = nullptr;
 }
 
 

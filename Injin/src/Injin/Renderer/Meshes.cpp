@@ -1,7 +1,7 @@
 #include "Meshes.h"
 
-engin::Meshes::Meshes(const std::vector<vertexData>& vData, const std::vector<uint32_t>& iData)
-	:vertexDataSize(vData.size()),indexDataSize(iData.size())
+engin::Meshes::Meshes(const std::vector<vertexData>& vData, const std::vector<uint32_t>& iData, const std::string& name)
+	:vertexDataSize(vData.size()),indexDataSize(iData.size()),m_meshName(name)
 {
 
 	glGenVertexArrays(1, &m_VAO);
@@ -78,9 +78,9 @@ void engin::Meshes::drawMesh()
 {
 	this->bindVertexArray();
 	if (indexDataSize != 0)
-		glDrawElements(engin::drawMode, indexDataSize, GL_UNSIGNED_INT, 0);
+		glDrawElements(engin::drawMode, indexDataSize, GL_UNSIGNED_INT, (void*)0);
 	else
-		glDrawArrays(engin::drawMode, 0, vertexDataSize);
+		glDrawArrays(engin::drawMode, 0, (GLsizei)vertexDataSize);
 	this->unBindVertexArray();
 }
 
@@ -178,4 +178,10 @@ std::vector<engin::vertexData> engin::triangle = {
 std::vector<uint32_t> engin::squareIndex = {
 		0,1,2,
 		0,2,3
+};
+
+
+std::vector<engin::vertexData> engin::line2D = {
+	{glm::vec3(0.0f,0.0f,0.0f),   glm::vec3(1.0f,1.0f,1.0f),  glm::vec2(0.0f,0.0f),     glm::vec3(0.f,0.f,0.f)},
+	{glm::vec3(1.0f,0.0f,0.0f),	  glm::vec3(1.0f,1.0f,1.0f),  glm::vec2(0.0f,0.0f),	    glm::vec3(0.f,0.f,0.f)},
 };

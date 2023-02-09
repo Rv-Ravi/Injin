@@ -32,5 +32,7 @@ void engin::grpicsInit::grpicInit()
 		WindowGL::terminate();
 		exit(1);
 	}
+
+	glEnable(GL_DEPTH_TEST);
 }
 

@@ -22,11 +22,16 @@ namespace engin
 	private:
 		uint32_t m_VAO, m_VBO, m_IBO;
 		size_t vertexDataSize, indexDataSize;
+
+		
 	public:
-		Meshes(const std::vector<vertexData>& vData, const std::vector<uint32_t>& iData = {});
+		Meshes(const std::vector<vertexData>& vData, const std::vector<uint32_t>& iData = {}
+		,const std::string& name = "Mesh");
 		Meshes(const Meshes& mesh) noexcept;
 		Meshes(Meshes&& mesh)noexcept;
 		~Meshes();
+
+		std::string m_meshName;
 
 	//operators
 		Meshes& operator=(const Meshes& mesh)noexcept;
@@ -50,6 +55,8 @@ namespace engin
 	extern std::vector<vertexData> square;
 	extern std::vector<uint32_t> squareIndex;
 	extern std::vector<vertexData> triangle;
+
+	extern std::vector<vertexData> line2D;
 }
 
 #endif //MESHES_H

@@ -38,33 +38,13 @@ namespace engin
 		virtual void mvCam(const WindowGL& window, float dtime) {}
 
 		virtual void imGuiWindows() {}
+		virtual void cameraCalculation() {};
 
 	protected:
 		virtual void calcViewMat() {}
 		virtual void calcProjMat() {}
 		virtual void calcViewProjMat() {}
 	};
-
-	class OrthoCamera : public Camera
-	{
-	public:
-		OrthoCamera(const glm::vec3& position);
-		~OrthoCamera();
-
-
-		glm::vec3 getCamDir();
-
-		void mvCam(const WindowGL& window, float dtime);
-
-		void imGuiWindows();
-
-	private:
-		void calcViewMat() ;
-		void calcProjMat() ;
-		void calcViewProjMat();
-
-	};
-
 
 	class PerspectiveCamera : public Camera
 	{
@@ -79,6 +59,15 @@ namespace engin
 		void mvCam(const WindowGL& window, float dtime);
 
 		void imGuiWindows();
+
+		void showTop();
+		void showBottom();
+		void showRight();
+		void showLeft();
+		void showFront();
+		void showBack();
+		void showIsometric();
+		void cameraCalculation();
 
 	private:
 		void calcViewMat();
