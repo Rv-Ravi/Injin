@@ -96,9 +96,6 @@
   <ItemGroup>
     <ClCompile Include="src\EditorApp.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="assets\Shaders\axisLine.glsl" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

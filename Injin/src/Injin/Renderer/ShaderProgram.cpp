@@ -5,16 +5,21 @@
 #include <iostream>
 
 uint32_t engin::ShaderProgram::shadrTyp[2] = {GL_VERTEX_SHADER,GL_FRAGMENT_SHADER};
+std::unordered_map<std::string, std::array<uint32_t, 3>> engin::ShaderProgram::m_uniformBlockLink = {};
+
+uint32_t engin::ShaderProgram::bindSlot = 0;
+
 
 engin::ShaderProgram::ShaderProgram(const std::string& fileName)
 {
 	m_programId = glCreateProgram();
 	createProgram(fileName);
+
+	getUniformBlock();
 }
 
 engin::ShaderProgram::~ShaderProgram()
 {
-	clearProgram();
 }
 
 void engin::ShaderProgram::bindProgram()
@@ -42,6 +47,53 @@ int32_t engin::ShaderProgram::getUlocation(const char* varName)
 		return tmpVal;
 	}
 	return iterator->second;
+}
+
+void engin::ShaderProgram::getUniformBlock()
+{
+	int32_t bcount;
+	glGetProgramiv(m_programId, GL_ACTIVE_UNIFORM_BLOCKS, &bcount);
+
+	uint32_t bufSize, length, size;;
+
+	for (uint32_t i = 0; i < bcount; i++)
+	{
+		glGetActiveUniformBlockiv(m_programId, i, GL_UNIFORM_BLOCK_NAME_LENGTH, (int32_t*)&bufSize);
+		char* blockName = new char[bufSize + 1];
+		glGetActiveUniformBlockiv(m_programId, i, GL_UNIFORM_BLOCK_DATA_SIZE, (int32_t*)&size);
+		glGetActiveUniformBlockName(m_programId, i, bufSize,(int32_t*) & length, blockName);
+
+		auto iterator = m_uniformBlockLink.find(std::string(blockName));
+
+		if (iterator == m_uniformBlockLink.end())
+		{
+			std::array<uint32_t, 3> tmpVal = { ShaderProgram::bindSlot,size,0 };
+
+			glUniformBlockBinding(m_programId, i, ShaderProgram::bindSlot++);
+			glGenBuffers(1, &tmpVal[2]);
+			glBindBuffer(GL_UNIFORM_BUFFER, tmpVal[2]);
+			glBufferData(GL_UNIFORM_BUFFER, tmpVal[1], nullptr, GL_STATIC_DRAW);
+			glBindBuffer(GL_UNIFORM_BUFFER, 0);
+			glBindBufferBase(GL_UNIFORM_BUFFER, tmpVal[0], tmpVal[2]);
+
+			m_uniformBlockLink[std::string(blockName)] = tmpVal;
+		}
+		else {
+			glUniformBlockBinding(m_programId, i, iterator->second[0]);
+		}
+
+		delete[] blockName;
+	}
+}
+
+uint32_t engin::ShaderProgram::getUniformBuffer(const std::string& bufName)
+{
+	return m_uniformBlockLink.at(bufName)[2];
+}
+
+void engin::ShaderProgram::setUniformBufferData(const std::string& bufName, GLintptr offset, GLsizeiptr size, const void* data)
+{
+	glNamedBufferSubData(getUniformBuffer(bufName), offset, size, data);
 }
 
 void engin::ShaderProgram::createProgram(const std::string& fileName)

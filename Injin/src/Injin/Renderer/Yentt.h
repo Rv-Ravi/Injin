@@ -93,7 +93,7 @@ namespace engin {
 
 	class Yentt {
 	private:
-		static Component* tempComp;
+		static std::vector<Component*>::iterator tempComp;
 		bool m_yenttState = false;
 
 	public:
@@ -125,10 +125,22 @@ namespace engin {
 		typ* getComponent() {
 			if (hasComponent<typ>())
 			{	
-				return (typ*)tempComp;
+				return (typ*)(*tempComp);
 			}
 				
 			return nullptr;
+		}
+
+		template<typename typ>
+		bool removeComponent()
+		{
+			if (hasComponent<typ>())
+			{
+				m_yenttComponents.erase(tempComp);
+				return true;
+			}
+
+			return false;
 		}
 
 		template<typename T>
@@ -143,7 +155,7 @@ namespace engin {
 			);
 			if (iterator != m_yenttComponents.end())
 			{
-				tempComp = *iterator;
+				tempComp = iterator;
 				return true;
 			}
 				

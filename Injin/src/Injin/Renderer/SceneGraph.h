@@ -3,8 +3,9 @@
 
 #include "../Renderer/Camera.h"
 #include "Yentt.h"
-#include <unordered_map>
 #include "../Renderer/ShaderProgram.h"
+#include <filesystem>
+#include <unordered_map>
 
 namespace engin {
 
@@ -17,9 +18,11 @@ namespace engin {
 		std::unique_ptr<engin::PerspectiveCamera> m_scenePerspectiveCamera;
 		static std::unordered_map<std::string, Meshes*> m_meshList;
 
-		engin::ShaderProgram program;
-
 		static engin::Yentt* currentYentt;
+
+		std::unique_ptr<engin::SceneRenderer> m_sceneRenderer;
+
+
 
 	public:
 		SceneGraph();
@@ -38,8 +41,30 @@ namespace engin {
 
 		void ImGuiWindows();
 
+		void deleteMesh();
+
 	private:
 		static void processMesh();
+	};
+
+
+	class SceneRenderer
+	{
+	private:
+		std::vector<ShaderProgram> m_shaderProgram;
+
+	public:
+		SceneRenderer();
+		~SceneRenderer();
+
+		void render(SceneGraph* scene);
+		void clearPrograms();
+		
+	private:
+		void createProgram();
+		
+		
+
 	};
 
 }

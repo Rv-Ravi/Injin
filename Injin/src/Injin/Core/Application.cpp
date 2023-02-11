@@ -11,10 +11,12 @@ engin::Application::Application(winProperties winProp)
 	m_guiLayer = std::make_unique<engin::ImguiLayer>(m_winGl->getWindow());
 	m_deltaTime = std::make_unique<engin::TimeStamp>();
 	m_sceneGraph = std::make_unique<engin::SceneGraph>();
+
 }
 
 engin::Application::~Application()
 {
+	m_sceneGraph->deleteMesh();
 	m_guiLayer->imGuiExit();
 }
 

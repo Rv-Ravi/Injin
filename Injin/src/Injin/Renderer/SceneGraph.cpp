@@ -3,21 +3,24 @@
 engin::Yentt* engin::SceneGraph::currentYentt = nullptr;
 
 
-engin::Component* engin::Yentt::tempComp = nullptr;
+std::vector<engin::Component*>::iterator engin::Yentt::tempComp;
 std::unordered_map<std::string, engin::Meshes*> engin::SceneGraph::m_meshList = {};
 
 engin::SceneGraph::SceneGraph()
 	:m_scenePerspectiveCamera(std::make_unique<engin::PerspectiveCamera>(glm::vec3(0.f, 0.f, 0.f))),
-	program("D:\\Coding\\GameEngine\\Injin\\Editor\\assets\\Shaders\\simpleObj.glsl")
+	m_sceneRenderer(std::make_unique<engin::SceneRenderer>())
 {
 	processMesh();
 	addBase();
 	addTriangleEntt();
 	addCubeEntt();
+
+
 }
 
 engin::SceneGraph::~SceneGraph()
 {
+	
 }
 void engin::SceneGraph::addEntt()
 {
@@ -52,7 +55,7 @@ void engin::SceneGraph::addBase()
 {
 	m_enttList.emplace_back("Base");
 	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Cube"));
-	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>();
+	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>(glm::vec3(0.f,0.f,0.f));
 
 	auto compo = m_enttList[m_enttList.size() - 1].getComponent<TransformComponent>();
 	compo->m_scale = { 10.f,0.5f,10.f };
@@ -70,17 +73,7 @@ void engin::SceneGraph::sceneUpdate(engin::WindowGL& window, float dtime)
 
 void engin::SceneGraph::drawScene(engin::WindowGL& window, float dtime)
 {
-	program.bindProgram();
-	
-	program.setUniValueM("viewProj", m_scenePerspectiveCamera->getViewProjMat(), 4);
-
-	for (auto& entt : m_enttList)
-	{
-		program.setUniValueM("transMat", entt.getComponent<TransformComponent>()->getModelMatrix(), 4);
-		program.setUniValuefV("uColor", entt.getComponent<MaterialComponent>()->m_materialColor, 3);
-		entt.getComponent<MeshComponent>()->m_meshData->drawMesh();
-	}
-	program.unbindProgram();
+	m_sceneRenderer->render(this);
 }
 
 void engin::SceneGraph::ImGuiWindows()
@@ -117,4 +110,12 @@ void engin::SceneGraph::processMesh()
 	m_meshList["Triangle"] = new engin::Meshes(engin::triangle, {}, "Triangle");
 	m_meshList["Cube"] = new engin::Meshes(engin::block, engin::blockIndex,"Cube");
 
+}
+
+void engin::SceneGraph::deleteMesh() {
+
+	for (auto& mesh : m_meshList)
+	{
+		mesh.second->deleteBuffers();
+	}
 }

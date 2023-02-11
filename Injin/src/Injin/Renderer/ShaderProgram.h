@@ -17,6 +17,9 @@ namespace engin {
 		uint32_t m_programId;
 		static uint32_t shadrTyp[2];
 		std::unordered_map<std::string, int32_t> m_uLocVal;
+		static std::unordered_map<std::string, std::array<uint32_t, 3>> m_uniformBlockLink;
+
+		static uint32_t bindSlot;
 
 	public:
 		ShaderProgram(const std::string& fileName);
@@ -26,7 +29,7 @@ namespace engin {
 	public:
 		uint32_t getProgramId() const { return m_programId; }
 		void bindProgram();
-		void unbindProgram();
+		static void unbindProgram();
 
 		void clearProgram();
 
@@ -120,12 +123,16 @@ namespace engin {
 			}
 		}
 
+		static uint32_t getUniformBuffer(const std::string& bufName);
+
+		static void setUniformBufferData(const std::string& bufName,GLintptr offset,GLsizeiptr size,const void* data);
 	private:
 		void createProgram(const std::string& fileName);
 		void processShaderFile(const std::string& fileName);
 		void processShader(const engin::SHADERTYPE& shaderType,const char* shaderCode);
 		int32_t getUlocation(const char* varName);
 
+		void getUniformBlock();
 
 	};
 }

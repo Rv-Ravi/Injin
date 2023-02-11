@@ -33,9 +33,7 @@ engin::Meshes::Meshes(Meshes&& mesh) noexcept
 
 engin::Meshes::~Meshes()
 {
-	glDeleteVertexArrays(1, &m_VAO);
-	glDeleteBuffers(1, &m_VBO);
-	glDeleteBuffers(1, &m_IBO);
+
 }
 
 engin::Meshes& engin::Meshes::operator=(const Meshes& mesh) noexcept
@@ -82,6 +80,13 @@ void engin::Meshes::drawMesh()
 	else
 		glDrawArrays(engin::drawMode, 0, (GLsizei)vertexDataSize);
 	this->unBindVertexArray();
+}
+
+void engin::Meshes::deleteBuffers()
+{
+	glDeleteVertexArrays(1, &m_VAO);
+	glDeleteBuffers(1, &m_VBO);
+	glDeleteBuffers(1, &m_IBO);
 }
 
 void engin::Meshes::setData(const std::vector<vertexData>& vData, const std::vector<uint32_t>& iData)

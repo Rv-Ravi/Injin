@@ -8,9 +8,10 @@ layout(location = 3) in vec3 vertexNormal;
 smooth out vec3 vColor;
 smooth out vec2 tCord;
 
-uniform mat4 transMat;
-uniform mat4 viewProj;
-
+layout (std140) uniform Matrices{
+	mat4 transMat;
+	mat4 viewProj;
+};
 void main()
 {
 	gl_Position = viewProj * transMat * vec4(vertexPts, 1.f);
@@ -24,7 +25,7 @@ void main()
 smooth in vec3 vColor;
 smooth in vec2 tCord;
 
-uniform vec3 uColor;
+uniform	vec3 uColor;
 
 void main()
 {

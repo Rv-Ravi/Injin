@@ -46,6 +46,7 @@ namespace engin
 		void bindVertexArray();
 		void unBindVertexArray();
 		void drawMesh();
+		void deleteBuffers();
 	private:
 		void setData(const std::vector<vertexData>& vertexData, const std::vector<uint32_t>& indexData);
 
