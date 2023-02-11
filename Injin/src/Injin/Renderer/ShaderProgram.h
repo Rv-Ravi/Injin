@@ -117,7 +117,7 @@ namespace engin {
 				glUniform1f(tmpVal, value);
 			}
 
-			else if (typeid(varType) == typeid(int32_t*))
+			else if (typeid(varType) == typeid(int32_t))
 			{
 				glUniform1i(tmpVal, value);
 			}

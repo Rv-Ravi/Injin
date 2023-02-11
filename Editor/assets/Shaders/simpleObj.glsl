@@ -25,9 +25,18 @@ void main()
 smooth in vec3 vColor;
 smooth in vec2 tCord;
 
-uniform	vec3 uColor;
+uniform	sampler2D texUnit;
+uniform vec3 uColor;
+uniform int isTextured;
 
 void main()
 {
-	gl_FragColor = vec4(uColor,1.f);
+	if(isTextured == 0)
+	{
+		gl_FragColor = vec4(uColor,1.f);
+	}
+	else{
+		gl_FragColor = texture(texUnit,tCord);
+	}
+	
 }

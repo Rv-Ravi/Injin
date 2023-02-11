@@ -1167,6 +1167,9 @@
     <ClInclude Include="src\Injin\Renderer\SceneGraph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Injin\Renderer\Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Injin\Core\Application.cpp">
@@ -1221,6 +1224,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Injin\Renderer\SceneRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Injin\Renderer\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

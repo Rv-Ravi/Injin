@@ -40,6 +40,9 @@ void engin::SceneGraph::addCubeEntt()
 	m_enttList.emplace_back("Cube");
 	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Cube"));
 	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>();
+	namespace fileSys = std::filesystem;
+	auto currntPath = fileSys::current_path();
+	m_enttList[m_enttList.size() - 1].addComponent<TextureComponent>(currntPath.string() + std::string("\\assets\\Textures\\wallDiff.png"));
 	currentYentt = &m_enttList[m_enttList.size() - 1];
 }
 

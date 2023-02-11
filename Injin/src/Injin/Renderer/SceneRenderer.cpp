@@ -31,8 +31,22 @@ void engin::SceneRenderer::render(SceneGraph* scene)
 	{
 		shader::setUniformBufferData("Matrices", 0, sizeof(glm::mat4)
 			, &entt.getComponent<TransformComponent>()->getModelMatrix()[0].x);
+
+		auto texture = entt.getComponent<TextureComponent>();
+		auto material = entt.getComponent<MaterialComponent>();
+
+		if (texture)
+		{
+			texture->texture->bindTextureUnit(0);
+			m_shaderProgram[0].setUniValue("texUnit", 0);
+			m_shaderProgram[0].setUniValue("isTextured", 1);
+		}
+		else {
+			m_shaderProgram[0].setUniValuefV("uColor", entt.getComponent<MaterialComponent>()->m_materialColor, 3);
+			m_shaderProgram[0].setUniValue("isTextured", 0);
+		}
 		
-		m_shaderProgram[0].setUniValuefV("uColor", entt.getComponent<MaterialComponent>()->m_materialColor,3);
+		m_shaderProgram[0].setUniValue("texUnit", 0);
 		entt.getComponent<MeshComponent>()->m_meshData->drawMesh();
 	}
 	shader::unbindProgram();

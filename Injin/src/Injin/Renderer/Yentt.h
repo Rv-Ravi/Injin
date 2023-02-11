@@ -9,6 +9,7 @@
 #include <functional>
 #include <string>
 #include "Meshes.h"
+#include "Texture.h"
 
 namespace engin {
 
@@ -88,6 +89,24 @@ namespace engin {
 		{
 			ImGui::Text("Material Component: \n");
 			ImGui::ColorEdit3("Material Color",&m_materialColor.x);
+		}
+	};
+
+	struct TextureComponent : public Component
+	{
+		engin::Texture* texture;
+		TextureComponent(const std::string& name)
+			:Component(typeid(TextureComponent).name()), texture(new Texture(name))
+		{
+		}
+		~TextureComponent()
+		{
+			delete texture;
+		}
+		void ImGuiWindow()
+		{
+			ImGui::Text("Texture Component: \n");
+			ImGui::Text("Texture used : %s", texture->getName().c_str());
 		}
 	};
 
