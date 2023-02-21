@@ -3,30 +3,31 @@
 
 #include <vector>
 #include <string>
-
+#include <unordered_map>
 
 
 namespace engin
 {
 	class Texture
 	{
-	private:
-		uint32_t m_textureId;
-		std::string m_textureName;
 
 	public:
+		static std::vector<std::pair<std::string,Texture>> m_textureList;
+	private:
+		uint32_t m_textureId;	
+
+	public:
+		Texture() = default;
 		Texture(const std::string& texture);
 		~Texture();
-
-		std::string getName() const {
-			return m_textureName;
-		}
 
 		uint32_t getTxtureId() const {
 			return m_textureId;
 		}
 
 		void bindTextureUnit(uint32_t unit);
+
+		static Texture* getTexture(const std::string& texture);
 
 	private:
 		void getTextureFile(const std::string& texture);

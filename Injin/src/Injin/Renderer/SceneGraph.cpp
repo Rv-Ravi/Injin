@@ -40,9 +40,6 @@ void engin::SceneGraph::addCubeEntt()
 	m_enttList.emplace_back("Cube");
 	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Cube"));
 	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>();
-	namespace fileSys = std::filesystem;
-	auto currntPath = fileSys::current_path();
-	m_enttList[m_enttList.size() - 1].addComponent<TextureComponent>(currntPath.string() + std::string("\\assets\\Textures\\wallDiff.png"));
 	currentYentt = &m_enttList[m_enttList.size() - 1];
 }
 
@@ -58,8 +55,7 @@ void engin::SceneGraph::addBase()
 {
 	m_enttList.emplace_back("Base");
 	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Cube"));
-	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>(glm::vec3(0.f,0.f,0.f));
-
+	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>();
 	auto compo = m_enttList[m_enttList.size() - 1].getComponent<TransformComponent>();
 	compo->m_scale = { 10.f,0.5f,10.f };
 
@@ -83,25 +79,34 @@ void engin::SceneGraph::ImGuiWindows()
 {
 	ImGui::Begin("Scene Graph");
 	ImGui::Text("Entities : \n");
+	if (ImGui::Button("Main Camera"))
+	{
+		currentYentt = nullptr;
+		CameraSettings = true;
+	}
 	for (auto& entt : m_enttList)
 	{
-		if(ImGui::Button(entt.enttName.c_str()))
-			currentYentt = &entt;
+		if (ImGui::Button(entt.enttName.c_str()))
+		{
+			CameraSettings = false; currentYentt = &entt;
+		}
+			
 	}
-	ImGui::End();
-
-	ImGui::Begin("Main Camera settings");
-
-	m_scenePerspectiveCamera->imGuiWindows();
-
 	ImGui::End();
 
 	ImGui::Begin("Properties");
 
-	for (auto& component : currentYentt->m_yenttComponents)
+	if (currentYentt)
 	{
-		component->ImGuiWindow();
+		for (auto& component : currentYentt->m_yenttComponents)
+		{
+			component->ImGuiWindow();
+		}
 	}
+	else if(CameraSettings){
+		m_scenePerspectiveCamera->imGuiWindows();
+	}
+
 
 	ImGui::End();
 

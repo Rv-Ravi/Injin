@@ -19,6 +19,7 @@ namespace engin {
 		static std::unordered_map<std::string, Meshes*> m_meshList;
 
 		static engin::Yentt* currentYentt;
+		bool CameraSettings = false;
 
 		std::unique_ptr<engin::SceneRenderer> m_sceneRenderer;
 

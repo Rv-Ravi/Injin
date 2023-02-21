@@ -39,7 +39,7 @@ void engin::Application::runApp()
 void engin::Application::onUpdate()
 {
 	m_deltaTime->update();
-	engin::grpicsInit::clrColrBuffr({ 1.f,1.f,1.f,1.f });
+	engin::grpicsInit::clrColrBuffr({ 0.2f,0.2f,0.2f,1.f });
 	engin::grpicsInit::clrBuffr();
 }
 
@@ -48,6 +48,8 @@ void engin::Application::imGuiUpdates()
 	m_guiLayer->setNewFrame();
 
 	m_sceneGraph->ImGuiWindows();
+	ImGui::ShowDemoWindow();
+	
 
 	m_guiLayer->renderData();
 }

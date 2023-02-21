@@ -10,10 +10,18 @@
 #include <string>
 #include "Meshes.h"
 #include "Texture.h"
+#include <filesystem>
 
 namespace engin {
 
+	struct ColorMaterial {
+		glm::vec3 m_ambient = { 0.1f,0.1f,0.1f }, m_diffuse = { 0.8f,0.8f,0.8f }, m_specular = {1.f,1.f,1.f};
+	};
 
+	struct TextureMaterial {
+		std::string m_diffuse = "";
+		std::string m_specular = "";
+	};
 	struct Component {
 		std::string m_compId;
 
@@ -42,6 +50,15 @@ namespace engin {
 				glm::rotate(glm::mat4(1.f), glm::radians(m_rotation.x), glm::vec3(1.f, 0.f, 0.f));
 
 			return glm::translate(glm::mat4(1.f), m_position) * rotation * glm::scale(glm::mat4(1.f), m_scale);
+		}
+
+		glm::mat4 getNormalMatrix()
+		{
+			glm::mat4 rotation = glm::rotate(glm::mat4(1.f), glm::radians(m_rotation.z), glm::vec3(0.f, 0.f, 1.f)) *
+				glm::rotate(glm::mat4(1.f), glm::radians(m_rotation.y), glm::vec3(0.f, 1.f, 0.f)) *
+				glm::rotate(glm::mat4(1.f), glm::radians(m_rotation.x), glm::vec3(1.f, 0.f, 0.f));
+
+			return glm::scale(glm::mat4(1.f), glm::vec3(1.f / m_scale.x, 1.f / m_scale.y, 1.f / m_scale.z)) * rotation;
 		}
 
 		void ImGuiWindow()
@@ -75,9 +92,13 @@ namespace engin {
 
 	struct MaterialComponent : public Component
 	{
-		glm::vec3 m_materialColor;
-		MaterialComponent(const glm::vec3& color = { 0.2f,0.2f,0.2f })
-			:Component(typeid(MaterialComponent).name()),m_materialColor(color)
+		engin::ColorMaterial m_colMaterial;
+		engin::TextureMaterial m_texMaterial;
+		float m_shininess = 12.f;
+		bool isTexture = false;
+
+		MaterialComponent()
+			:Component(typeid(MaterialComponent).name())
 		{
 
 		}
@@ -85,28 +106,48 @@ namespace engin {
 		{
 
 		}
-		void ImGuiWindow()
-		{
-			ImGui::Text("Material Component: \n");
-			ImGui::ColorEdit3("Material Color",&m_materialColor.x);
-		}
-	};
 
-	struct TextureComponent : public Component
-	{
-		engin::Texture* texture;
-		TextureComponent(const std::string& name)
-			:Component(typeid(TextureComponent).name()), texture(new Texture(name))
-		{
-		}
-		~TextureComponent()
-		{
-			delete texture;
-		}
 		void ImGuiWindow()
 		{
-			ImGui::Text("Texture Component: \n");
-			ImGui::Text("Texture used : %s", texture->getName().c_str());
+
+			ImGui::Text("Material Component: \n");
+			ImGui::Checkbox("Texture", &isTexture);
+			if (!isTexture)
+			{
+				ImGui::ColorEdit3("Material ambient color", &m_colMaterial.m_ambient.x);
+				ImGui::ColorEdit3("Material diffuse color", &m_colMaterial.m_diffuse.x);
+				ImGui::ColorEdit3("Material specular color", &m_colMaterial.m_specular.x);
+			}
+			else {
+				if (ImGui::BeginCombo("##Diffuse texture", m_texMaterial.m_diffuse.c_str()))
+				{
+					for (auto& data:Texture::m_textureList)
+					{
+						bool is_selected = (m_texMaterial.m_diffuse.c_str() == data.first.c_str());
+						if (ImGui::Selectable(data.first.c_str(), is_selected))
+						{
+							m_texMaterial.m_diffuse = data.first;
+							if (is_selected) ImGui::SetItemDefaultFocus();
+						}
+					}
+					ImGui::EndCombo();
+				}
+				if (ImGui::BeginCombo("##Specular texture", m_texMaterial.m_specular.c_str()))
+				{
+					for (auto& data : Texture::m_textureList)
+					{
+						bool is_selected = (m_texMaterial.m_specular.c_str() == data.first.c_str());
+						if (ImGui::Selectable(data.first.c_str(), is_selected))
+						{
+							m_texMaterial.m_specular = data.first;
+							if (is_selected) ImGui::SetItemDefaultFocus();
+						}
+					}
+					ImGui::EndCombo();
+				}
+			}
+			ImGui::DragFloat("Shinniness", &m_shininess, 1.f, 0.f, 255.f, "%.2f");
+			
 		}
 	};
 

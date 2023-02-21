@@ -64,7 +64,6 @@ void engin::ShaderProgram::getUniformBlock()
 		glGetActiveUniformBlockName(m_programId, i, bufSize,(int32_t*) & length, blockName);
 
 		auto iterator = m_uniformBlockLink.find(std::string(blockName));
-
 		if (iterator == m_uniformBlockLink.end())
 		{
 			std::array<uint32_t, 3> tmpVal = { ShaderProgram::bindSlot,size,0 };
@@ -91,10 +90,7 @@ uint32_t engin::ShaderProgram::getUniformBuffer(const std::string& bufName)
 	return m_uniformBlockLink.at(bufName)[2];
 }
 
-void engin::ShaderProgram::setUniformBufferData(const std::string& bufName, GLintptr offset, GLsizeiptr size, const void* data)
-{
-	glNamedBufferSubData(getUniformBuffer(bufName), offset, size, data);
-}
+
 
 void engin::ShaderProgram::createProgram(const std::string& fileName)
 {

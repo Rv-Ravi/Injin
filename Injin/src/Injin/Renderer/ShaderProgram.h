@@ -125,7 +125,12 @@ namespace engin {
 
 		static uint32_t getUniformBuffer(const std::string& bufName);
 
-		static void setUniformBufferData(const std::string& bufName,GLintptr offset,GLsizeiptr size,const void* data);
+		static void setUniformBufferData(const std::string& bufName, GLintptr offset, GLsizeiptr size, const void* data)
+		{
+			glBindBuffer(GL_UNIFORM_BUFFER, getUniformBuffer(bufName));
+			glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
+			glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		}
 	private:
 		void createProgram(const std::string& fileName);
 		void processShaderFile(const std::string& fileName);
