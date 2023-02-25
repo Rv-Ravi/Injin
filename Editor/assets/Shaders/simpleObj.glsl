@@ -61,7 +61,11 @@ void main()
 		gl_FragColor = vec4((material.ambientColor + diffFac + specFac) * vec3(1.f), 1.f);
 	}
 	else{
-		gl_FragColor = texture(diffTexUnit,fIn.tCord);
+
+		vec4 diffFac = max(dot(lightDir,normal),0.f) * texture(diffTexUnit,fIn.tCord);
+		vec4 specFac = pow(max(dot(reflect(-lightDir,normal),normalize(camPos - fIn.objPos)),0.f),material.shinniness) * texture(specTexUnit,fIn.tCord);
+
+		gl_FragColor = (diffFac + specFac) * vec4(1.f);
 	}
 	
 }

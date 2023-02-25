@@ -69,7 +69,7 @@ void engin::SceneRenderer::render(SceneGraph* scene)
 			}
 			if (texture2)
 			{
-				texture1->bindTextureUnit(1);
+				texture2->bindTextureUnit(1);
 				m_shaderProgram[0].setUniValue("specTexUnit", 1);
 			}
 		}
