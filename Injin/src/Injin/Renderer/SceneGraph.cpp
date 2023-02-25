@@ -1,7 +1,7 @@
 #include "SceneGraph.h"
 
 engin::Yentt* engin::SceneGraph::currentYentt = nullptr;
-
+std::vector<std::string> engin::TagComponent::ms_tagList = { "Object","Light","Camera" };
 
 std::vector<engin::Component*>::iterator engin::Yentt::tempComp;
 std::unordered_map<std::string, engin::Meshes*> engin::SceneGraph::m_meshList = {};
@@ -14,6 +14,7 @@ engin::SceneGraph::SceneGraph()
 	addBase();
 	addTriangleEntt();
 	addCubeEntt();
+	addSpotLit();
 
 
 }
@@ -30,6 +31,7 @@ void engin::SceneGraph::addEntt()
 void engin::SceneGraph::addSquareEntt()
 {
 	m_enttList.emplace_back("Square");
+	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Object");
 	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Square"));
 
 	currentYentt = &m_enttList[m_enttList.size() - 1];
@@ -38,6 +40,7 @@ void engin::SceneGraph::addSquareEntt()
 void engin::SceneGraph::addCubeEntt()
 {
 	m_enttList.emplace_back("Cube");
+	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Object");
 	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Cube"));
 	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>();
 	currentYentt = &m_enttList[m_enttList.size() - 1];
@@ -46,6 +49,7 @@ void engin::SceneGraph::addCubeEntt()
 void engin::SceneGraph::addTriangleEntt()
 {
 	m_enttList.emplace_back("Triangle");
+	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Object");
 	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Triangle"));
 	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>();
 	currentYentt = &m_enttList[m_enttList.size() - 1];
@@ -54,6 +58,7 @@ void engin::SceneGraph::addTriangleEntt()
 void engin::SceneGraph::addBase()
 {
 	m_enttList.emplace_back("Base");
+	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Object");
 	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Cube"));
 	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>();
 	auto compo = m_enttList[m_enttList.size() - 1].getComponent<TransformComponent>();
@@ -62,7 +67,24 @@ void engin::SceneGraph::addBase()
 	currentYentt = &m_enttList[m_enttList.size() - 1];
 }
 
-
+void engin::SceneGraph::addDirectionalLit(){
+	m_enttList.emplace_back("Light");
+	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Light");
+	m_enttList[m_enttList.size() - 1].addComponent<LightComponent>(engin::LightType::DIRECTIONAL);
+	currentYentt = &m_enttList[m_enttList.size() - 1];
+}
+void engin::SceneGraph::addPointLit(){
+	m_enttList.emplace_back("Light");
+	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Light");
+	m_enttList[m_enttList.size() - 1].addComponent<LightComponent>(engin::LightType::POINT);
+	currentYentt = &m_enttList[m_enttList.size() - 1];
+}
+void engin::SceneGraph::addSpotLit() {
+	m_enttList.emplace_back("Light");
+	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Light");
+	m_enttList[m_enttList.size() - 1].addComponent<LightComponent>(engin::LightType::SPOT);
+	currentYentt = &m_enttList[m_enttList.size() - 1];
+}
 
 void engin::SceneGraph::sceneUpdate(engin::WindowGL& window, float dtime)
 {

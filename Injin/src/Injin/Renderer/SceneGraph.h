@@ -35,6 +35,10 @@ namespace engin {
 		void addCubeEntt();
 		void addTriangleEntt();
 
+		void addDirectionalLit();
+		void addPointLit();
+		void addSpotLit();
+
 		void addBase();
 
 		void sceneUpdate(engin::WindowGL& window,float dtime);

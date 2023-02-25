@@ -14,6 +14,11 @@
 
 namespace engin {
 
+	enum class LightType : uint16_t
+	{
+		DIRECTIONAL = 0,POINT,SPOT
+	};
+
 	struct ColorMaterial {
 		glm::vec3 m_ambient = { 0.1f,0.1f,0.1f }, m_diffuse = { 0.8f,0.8f,0.8f }, m_specular = {1.f,1.f,1.f};
 	};
@@ -151,6 +156,82 @@ namespace engin {
 		}
 	};
 
+	struct LightComponent:public Component
+	{
+		engin::LightType m_litTyp;
+		glm::vec3 m_litColor = {1.f,1.f,1.f};
+		float m_intensity = 0.8f,m_radius = 3.f,m_innerAngle = 0.8f,m_outerAngle = 0.7f;
+
+		LightComponent(engin::LightType typ) : Component(typeid(LightComponent).name()), m_litTyp(typ) {}
+		~LightComponent(){}
+
+		glm::vec3 lightDirection(const glm::vec3& rotation)
+		{
+			return 
+			{ cos(glm::radians(rotation.x)) * sin(glm::radians(rotation.y)),
+				sin(glm::radians(rotation.x)),
+				cos(glm::radians(rotation.x)) * cos(glm::radians(rotation.y)) };
+		}
+
+		void ImGuiWindow()
+		{
+			ImGui::Text("Light Component: \n");
+			std::vector<std::string> litVal = { "Directional Light","Point Light","Spot Light" };
+			bool is_selected;
+			if (ImGui::BeginCombo("##Light Type", litVal[(uint16_t)m_litTyp].c_str()))
+			{
+				is_selected = (litVal[(uint16_t)m_litTyp].c_str() == "Directional Light");
+				if (ImGui::Selectable("Directional Light", is_selected))
+				{
+					m_litTyp = LightType::DIRECTIONAL;
+					if (is_selected) ImGui::SetItemDefaultFocus();
+				}
+				is_selected = (litVal[(uint16_t)m_litTyp].c_str() == "Point Light");
+				if (ImGui::Selectable("Point Light", is_selected))
+				{
+					m_litTyp = LightType::POINT;
+					if (is_selected) ImGui::SetItemDefaultFocus();
+				}
+				is_selected = (litVal[(uint16_t)m_litTyp].c_str() == "Spot Light");
+				if (ImGui::Selectable("Spot Light", is_selected))
+				{
+					m_litTyp = LightType::SPOT;
+					if (is_selected) ImGui::SetItemDefaultFocus();
+				}
+				ImGui::EndCombo();
+			}
+
+			ImGui::ColorEdit3("Light color", &m_litColor.x);
+			ImGui::DragFloat("Intensity", &m_intensity, 0.001f, 0.f, 1.f, "%.4f");
+
+			if (m_litTyp != engin::LightType::DIRECTIONAL)
+			{
+				ImGui::DragFloat("Radius", &m_radius, 0.5f, 0.f, 20.f, "%.2f");
+				if (m_litTyp == engin::LightType::SPOT)
+				{
+					ImGui::DragFloat("Inner Angle", &m_innerAngle, 0.001f, 0.f, 1.f, "%.4f");
+					ImGui::DragFloat("Outer Angle", &m_outerAngle, 0.001f, 0.f, 1.f, "%.4f");
+				}
+			}
+		}
+	};
+
+	struct TagComponent : public Component {
+		static std::vector<std::string> ms_tagList;
+		std::string m_tagName;
+
+		TagComponent(const std::string& tagName):Component(typeid(TagComponent).name()),m_tagName(tagName){}
+		~TagComponent() {}
+
+		void ImGuiWindow()
+		{
+			ImGui::Text("Tag Component: \n");
+			ImGui::Text("Tag :        %s", m_tagName.c_str());
+		}
+	};
+
+
+
 	class Yentt {
 	private:
 		static std::vector<Component*>::iterator tempComp;
@@ -222,6 +303,8 @@ namespace engin {
 			return false;
 		}
 	};
+
+	
 
 }
 
