@@ -25,7 +25,7 @@ engin::PerspectiveCamera::PerspectiveCamera(const glm::vec3& position)
 	:Camera(position), m_pitch(0.f), m_yaw(0.f), m_lastX(0.f), m_lastY(0.f),m_fov(45.f),
 	m_camX(1.f, 0.f, 0.f), m_camY(0.f, 0.f, -1.f), m_camZ(0.f, 1.f, 0.f), m_camDir(-m_camZ)
 {
-	showIsometric();
+	showFront();
 	cameraCalculation();
 }
 
@@ -127,7 +127,7 @@ void engin::PerspectiveCamera::imGuiWindows()
 
 void engin::PerspectiveCamera::showTop()
 {
-	m_camPos = glm::vec3(0.f, 10.f, 0.f);
+	m_camPos = glm::vec3(0.f, 20.f, 0.f);
 	m_pitch = 0.f; m_yaw = 180.f;
 	m_camZ = glm::vec3(0.f, 1.f, 0.f);
 	m_camY = glm::vec3(0.f, 0.f, -1.f);
@@ -136,7 +136,7 @@ void engin::PerspectiveCamera::showTop()
 
 void engin::PerspectiveCamera::showBottom()
 {
-	m_camPos = glm::vec3(0.f, -10.f, 0.f);
+	m_camPos = glm::vec3(0.f, -20.f, 0.f);
 	m_camZ = glm::vec3(0.f, -1.f, 0.f);
 	m_camY = glm::vec3(0.f, 0.f, 1.f);
 	m_camX = glm::vec3(1.f, 0.f, 0.f);
@@ -145,7 +145,7 @@ void engin::PerspectiveCamera::showBottom()
 
 void engin::PerspectiveCamera::showRight()
 {
-	m_camPos = glm::vec3(10.f, 0.f, 0.f);
+	m_camPos = glm::vec3(20.f, 0.f, 0.f);
 	m_camZ = glm::vec3(1.f, 0.f, 0.f);
 	m_camY = glm::vec3(0.f, 1.f, 0.f);
 	m_camX = glm::vec3(0.f, 0.f, -1.f);
@@ -154,7 +154,7 @@ void engin::PerspectiveCamera::showRight()
 
 void engin::PerspectiveCamera::showLeft()
 {
-	m_camPos = glm::vec3(-10.f, 0.f, 0.f);
+	m_camPos = glm::vec3(-20.f, 0.f, 0.f);
 	m_camZ = glm::vec3(-1.f, 0.f, 0.f);
 	m_camY = glm::vec3(0.f, 1.f, 0.f);
 	m_camX = glm::vec3(0.f, 0.f, 1.f);
@@ -163,7 +163,7 @@ void engin::PerspectiveCamera::showLeft()
 
 void engin::PerspectiveCamera::showFront()
 {
-	m_camPos = glm::vec3(0.f, 0.f, 10.f);
+	m_camPos = glm::vec3(0.f, 0.f, 20.f);
 	m_camZ = glm::vec3(0.f, 0.f, 1.f);
 	m_camY = glm::vec3(0.f, 1.f, 0.f);
 	m_camX = glm::vec3(1.f, 0.f, 0.f);
@@ -172,7 +172,7 @@ void engin::PerspectiveCamera::showFront()
 
 void engin::PerspectiveCamera::showBack()
 {
-	m_camPos = glm::vec3(0.f, 0.f, -10.f);
+	m_camPos = glm::vec3(0.f, 0.f, -20.f);
 	m_camZ = glm::vec3(0.f, 0.f, -1.f);
 	m_camY = glm::vec3(0.f, 1.f, 0.f);
 	m_camX = glm::vec3(-1.f, 0.f, 0.f);

@@ -1,7 +1,7 @@
 #include "SceneGraph.h"
 
 engin::Yentt* engin::SceneGraph::currentYentt = nullptr;
-std::vector<std::string> engin::TagComponent::ms_tagList = { "Object","Light","Camera" };
+std::vector<std::string> engin::TagComponent::ms_tagList = { "Object","Light","Camera","Base"};
 
 std::vector<engin::Component*>::iterator engin::Yentt::tempComp;
 std::unordered_map<std::string, engin::Meshes*> engin::SceneGraph::m_meshList = {};
@@ -58,13 +58,10 @@ void engin::SceneGraph::addTriangleEntt()
 void engin::SceneGraph::addBase()
 {
 	m_enttList.emplace_back("Base");
-	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Object");
-	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Cube"));
-	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>();
+	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Base");
+	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Square"));
 	auto compo = m_enttList[m_enttList.size() - 1].getComponent<TransformComponent>();
-	compo->m_scale = { 10.f,0.5f,10.f };
-
-	currentYentt = &m_enttList[m_enttList.size() - 1];
+	compo->m_scale = { 50.f,50.0f,0.f };
 }
 
 void engin::SceneGraph::addDirectionalLit(){
@@ -108,11 +105,13 @@ void engin::SceneGraph::ImGuiWindows()
 	}
 	for (auto& entt : m_enttList)
 	{
-		if (ImGui::Button(entt.enttName.c_str()))
+		if (entt.getComponent<TagComponent>()->m_tagName != "Base")
 		{
-			CameraSettings = false; currentYentt = &entt;
-		}
-			
+			if (ImGui::Button(entt.enttName.c_str()))
+			{
+				CameraSettings = false; currentYentt = &entt;
+			}
+		}	
 	}
 	ImGui::End();
 
