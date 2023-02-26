@@ -48,6 +48,8 @@ namespace engin {
 
 		void deleteMesh();
 
+		void addTerrain();
+
 	private:
 		static void processMesh();
 	};

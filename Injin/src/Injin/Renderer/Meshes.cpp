@@ -1,5 +1,5 @@
 #include "Meshes.h"
-
+#include <fstream>
 engin::Meshes::Meshes(const std::vector<vertexData>& vData, const std::vector<uint32_t>& iData, const std::string& name)
 	:vertexDataSize(vData.size()),indexDataSize(iData.size()),m_meshName(name)
 {
@@ -11,6 +11,14 @@ engin::Meshes::Meshes(const std::vector<vertexData>& vData, const std::vector<ui
 
 	setData(vData, iData);
 
+}
+
+engin::Meshes::Meshes(const std::string& name)
+	:m_meshName(name)
+{
+	glGenVertexArrays(1, &m_VAO);
+	glGenBuffers(1, &m_VBO);
+	glGenBuffers(1, &m_IBO);
 }
 
 engin::Meshes::Meshes(const Meshes& mesh) noexcept
@@ -62,6 +70,12 @@ engin::Meshes& engin::Meshes::operator=(Meshes&& mesh) noexcept
 	return *this;
 }
 
+void engin::Meshes::setDataSize(size_t t1, size_t t2)
+{
+	vertexDataSize = t1;
+	indexDataSize = t2;
+}
+
 void engin::Meshes::bindVertexArray()
 {
 	glBindVertexArray(m_VAO);
@@ -110,6 +124,7 @@ void engin::Meshes::setData(const std::vector<vertexData>& vData, const std::vec
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * indexDataSize, &iData[0], GL_STATIC_DRAW);
 	}
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -190,3 +205,102 @@ std::vector<engin::vertexData> engin::line2D = {
 	{glm::vec3(0.0f,0.0f,0.0f),   glm::vec3(1.0f,1.0f,1.0f),  glm::vec2(0.0f,0.0f),     glm::vec3(0.f,0.f,0.f)},
 	{glm::vec3(1.0f,0.0f,0.0f),	  glm::vec3(1.0f,1.0f,1.0f),  glm::vec2(0.0f,0.0f),	    glm::vec3(0.f,0.f,0.f)},
 };
+
+
+engin::TerrainGeneration::TerrainGeneration()
+	:m_octave(0), m_xOffset(0), m_yOffset(0), m_freq(0), m_amp(0), m_lucnarity(0),
+	m_persistance(0), m_scale(1), m_terrainMesh("Terrain")
+{
+	generateTerrain();
+}
+
+engin::TerrainGeneration::~TerrainGeneration()
+{
+}
+
+void engin::TerrainGeneration::generateTerrain()
+{
+	std::vector<vertexData> tmpVertex;
+	std::vector<uint32_t> tmpIndex;
+	vertexData vData = vertexData();
+	vData.vertexColor = glm::vec3(1.f,0.f,0.f);
+	vData.vertexNormal = glm::vec3(0.f, 1.f, 0.f);
+
+	for (uint16_t i = 0,j = 0; i <= m_height; j++)
+	{
+
+		for (uint16_t oct = m_octave; oct > 0; oct--)
+		{
+
+		}
+		vData.vertexPoints.x = j - (m_width / 2.f); vData.vertexPoints.z = i - (m_height / 2.f);
+		vData.textureCoord.x = (1.f / m_width) * j; vData.textureCoord.y = 1.f - (1.f / m_height) * i;
+
+		tmpVertex.push_back(vData);
+		if (j >= m_width )
+		{
+			i++;j = -1;
+		}
+		
+	}
+
+	for (uint32_t i = 0, j = 0; i < m_height; j++)
+	{
+		uint32_t d1 = (m_width + 1) * (i + 1) + j,
+			d2 = (m_width + 1) * i + (1 + j),
+			d3 = (m_width + 1) * i + j;
+
+		tmpIndex.emplace_back(d1);
+		tmpIndex.emplace_back(d2);
+		tmpIndex.emplace_back(d3);
+		tmpIndex.emplace_back(d1);
+		tmpIndex.emplace_back(d1 + 1);
+		tmpIndex.emplace_back(d2);
+
+
+		if (j >= m_width - 1)
+		{
+			i++; j = -1;
+		}
+	}
+
+	m_terrainMesh.setDataSize(tmpVertex.size(), tmpIndex.size());
+	setBufferData(tmpVertex, tmpIndex);
+}
+
+void engin::TerrainGeneration::setBufferData(const std::vector<vertexData>& vData, const std::vector<uint32_t>& iData)
+{
+	glBindVertexArray(m_terrainMesh.getVAO());
+	glBindBuffer(GL_ARRAY_BUFFER, m_terrainMesh.getVBO());
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_terrainMesh.getIBO());
+	if (!isSettedUp)
+	{
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData) * 51 * 51, nullptr, GL_DYNAMIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertexData), &((vertexData*)0)->vertexPoints);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertexData), &((vertexData*)0)->vertexColor);
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertexData), &((vertexData*)0)->textureCoord);
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(vertexData), &((vertexData*)0)->vertexNormal);
+
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * 51 * 51 * 6, nullptr, GL_DYNAMIC_DRAW);
+
+
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertexData) * vData.size(), &vData[0]);
+		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(uint32_t) * iData.size(), &iData[0]);
+		isSettedUp = true;
+		
+	}
+	else
+	{
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertexData) * vData.size(), &vData[0]);
+		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(uint32_t) * iData.size(), &iData[0]);
+	}
+
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}

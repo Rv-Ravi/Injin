@@ -1,7 +1,7 @@
 #include "SceneGraph.h"
 
 engin::Yentt* engin::SceneGraph::currentYentt = nullptr;
-std::vector<std::string> engin::TagComponent::ms_tagList = { "Object","Light","Camera","Base"};
+std::vector<std::string> engin::TagComponent::ms_tagList = { "Object","Light","Camera","Base","Terrain"};
 
 std::vector<engin::Component*>::iterator engin::Yentt::tempComp;
 std::unordered_map<std::string, engin::Meshes*> engin::SceneGraph::m_meshList = {};
@@ -11,8 +11,8 @@ engin::SceneGraph::SceneGraph()
 	m_sceneRenderer(std::make_unique<engin::SceneRenderer>())
 {
 	processMesh();
-	addBase();
-	addTriangleEntt();
+	//addBase();
+	addTerrain();
 	addCubeEntt();
 	addSpotLit();
 
@@ -80,6 +80,17 @@ void engin::SceneGraph::addSpotLit() {
 	m_enttList.emplace_back("Light");
 	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Light");
 	m_enttList[m_enttList.size() - 1].addComponent<LightComponent>(engin::LightType::SPOT);
+	currentYentt = &m_enttList[m_enttList.size() - 1];
+}
+
+void engin::SceneGraph::addTerrain()
+{
+	m_enttList.emplace_back("Terrain");
+	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Terrain");
+	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>();
+	m_enttList[m_enttList.size() - 1].addComponent<TerrainComponent>();
+	auto terrain = m_enttList[m_enttList.size() - 1].getComponent<TerrainComponent>();
+	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(&terrain->m_terrain->m_terrainMesh);
 	currentYentt = &m_enttList[m_enttList.size() - 1];
 }
 

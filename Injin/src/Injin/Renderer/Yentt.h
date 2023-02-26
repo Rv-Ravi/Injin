@@ -230,7 +230,39 @@ namespace engin {
 		}
 	};
 
+	struct TerrainComponent : public Component
+	{
+		TerrainGeneration* m_terrain;
 
+		TerrainComponent():Component(typeid(TerrainComponent).name()),m_terrain(new TerrainGeneration()){}
+		~TerrainComponent(){
+			delete m_terrain;
+		}
+		void ImGuiWindow()
+		{
+			uint16_t m_octave, m_xOffset, m_yOffset, m_width = 5, m_height = 5;
+			float m_freq, m_amp, m_lucnarity, m_persistance, m_scale;
+			ImGui::Text("Terrain Component: \n");
+
+			ImGui::DragFloat("Amplitude", &m_terrain->m_amp, 0.5f, 0.f, 50.f, "%.2f");
+			ImGui::DragFloat("Persistance", &m_terrain->m_persistance, 0.001f, 0.f, 1.f, "%.4f");
+			ImGui::DragFloat("Lucnarity", &m_terrain->m_lucnarity, 1.f, 0.f, 5.f, "%.2f");
+
+			ImGui::DragFloat("Scale", &m_terrain->m_scale, 0.5f, 1.f, 10.f, "%.2f");
+
+			ImGui::DragInt("Octave", &m_terrain->m_octave, 1, 0, 5.f);
+			ImGui::DragInt("X-Offset", &m_terrain->m_xOffset, 1, 0, 50.f);
+			ImGui::DragInt("Y-Offset", &m_terrain->m_yOffset, 1, 0, 50.f);
+			ImGui::DragInt("Plane width", &m_terrain->m_width, 1, 0, 50.f);
+			ImGui::DragInt("Plane Height", &m_terrain->m_height, 1, 0, 50.f);
+
+			if (ImGui::Button("Generate"))
+			{
+				m_terrain->generateTerrain();
+			}
+		}
+
+	};
 
 	class Yentt {
 	private:

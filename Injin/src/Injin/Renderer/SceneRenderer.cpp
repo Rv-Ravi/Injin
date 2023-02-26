@@ -53,7 +53,7 @@ void engin::SceneRenderer::render(SceneGraph* scene)
 	for (auto& entt : scene->m_enttList)
 	{
 		std::string tmpTag = entt.getComponent<TagComponent>()->m_tagName;
-		if (tmpTag == "Object")
+		if (tmpTag == "Object" || tmpTag == "Terrain")
 		{
 			shader::setUniformBufferData("Matrices", 0, sizeof(glm::mat4)
 				, &entt.getComponent<TransformComponent>()->getModelMatrix()[0].x);

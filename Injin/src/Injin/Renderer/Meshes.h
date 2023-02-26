@@ -5,6 +5,7 @@
 #include <vector>
 #include "../glContext/graphicsInit.h"
 #include "glm/glm.hpp"
+#include "../Core/Noise.h"
 
 namespace engin
 {
@@ -15,18 +16,27 @@ namespace engin
 		glm::vec2 textureCoord;
 		glm::vec3 vertexNormal;
 
+		//vertexData() {}
+		//~vertexData() {}
+		//vertexData(glm::vec3 pt,glm::vec3 col,glm::vec3 cord,glm::vec3 norm)
+		//	:vertexPoints(pt), vertexColor(col), textureCoord(cord),vertexNormal(norm)
+		//{
+		//
+		//}
+
 	};
 
 	class Meshes
 	{
 	private:
 		uint32_t m_VAO, m_VBO, m_IBO;
-		size_t vertexDataSize, indexDataSize;
+		size_t vertexDataSize = 0, indexDataSize = 0;
 
 		
 	public:
 		Meshes(const std::vector<vertexData>& vData, const std::vector<uint32_t>& iData = {}
 		,const std::string& name = "Mesh");
+		Meshes(const std::string& name);
 		Meshes(const Meshes& mesh) noexcept;
 		Meshes(Meshes&& mesh)noexcept;
 		~Meshes();
@@ -41,16 +51,36 @@ namespace engin
 		uint32_t getVAO() const { return m_VAO; }
 		uint32_t getVBO() const { return m_VBO; }
 		uint32_t getIBO() const { return m_IBO; }
+
+		void setDataSize(size_t t1, size_t t2 = 0);
 	//methods
 	public:
 		void bindVertexArray();
 		void unBindVertexArray();
 		void drawMesh();
 		void deleteBuffers();
-	private:
-		void setData(const std::vector<vertexData>& vertexData, const std::vector<uint32_t>& indexData);
-
+		void setData(const std::vector<vertexData>& vertexData, const std::vector<uint32_t>& indexData = {});
 	};
+
+	class TerrainGeneration
+	{
+	public:
+		int32_t m_octave, m_xOffset, m_yOffset,m_width = 5,m_height = 5;
+		float m_freq, m_amp, m_lucnarity, m_persistance,m_scale;
+		Meshes m_terrainMesh;
+	private:
+		bool isSettedUp = false;
+	public:
+		TerrainGeneration();
+		~TerrainGeneration();
+
+		void generateTerrain();
+
+	private:
+		void setBufferData(const std::vector<vertexData>& vertexData, const std::vector<uint32_t>& indexData = {});
+	};
+
+
 	extern std::vector<uint32_t> blockIndex;
 	extern std::vector<vertexData> block;
 	extern std::vector<vertexData> square;
