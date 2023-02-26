@@ -110,7 +110,7 @@ vec4 directionalLitCalc(in vec3 normal){
 vec4 pointlLitCalc(in vec3 normal){
 	
 	float objLitDist = max(length(fIn.objPos - light.position),0.0001f);
-	float attenFac = clamp(light.dist / objLitDist,0.f,1.f);
+	float attenFac = clamp(1.f - (objLitDist / light.dist),0.f,1.f);
 	vec3 lightDir = normalize(fIn.objPos - light.position);
 	if(material.isTextured == false)
 	{
