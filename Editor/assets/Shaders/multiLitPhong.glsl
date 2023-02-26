@@ -130,7 +130,7 @@ vec4 pointlLitCalc(in vec3 normal){
 }
 vec4 SpotLitCalc(in vec3 normal){
 	vec3 objLitDist = fIn.objPos - light.position;
-	float attenFac = clamp(light.dist / length(objLitDist),0.f,1.f);
+	float attenFac = clamp(1.f - (length(objLitDist) / light.dist),0.f,1.f);
 	vec3 lightDir = normalize(fIn.objPos - light.position);
 
 	float orgVal = dot(light.direction,normalize(objLitDist));
