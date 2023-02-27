@@ -208,8 +208,8 @@ std::vector<engin::vertexData> engin::line2D = {
 
 
 engin::TerrainGeneration::TerrainGeneration()
-	:m_octave(0), m_xOffset(0), m_yOffset(0), m_freq(0), m_amp(0), m_lucnarity(0),
-	m_persistance(0), m_scale(1), m_terrainMesh("Terrain")
+	:m_octave(2), m_xOffset(0), m_yOffset(0), m_freq(1.2), m_amp(3.f), m_lucnarity(2.f),
+	m_persistance(0.5f), m_scale(15.f), m_terrainMesh("Terrain"),noise(121)
 {
 	generateTerrain();
 }
@@ -226,14 +226,23 @@ void engin::TerrainGeneration::generateTerrain()
 	vData.vertexColor = glm::vec3(1.f,0.f,0.f);
 	vData.vertexNormal = glm::vec3(0.f, 1.f, 0.f);
 
+	
 	for (uint16_t i = 0,j = 0; i <= m_height; j++)
 	{
-
+		vData.vertexPoints.y = 0;
+		float tmpAmp = m_amp, tmpFreq = m_freq,normalization = 0;
 		for (uint16_t oct = m_octave; oct > 0; oct--)
 		{
+			float noiseVal = noise.noise2d({ ((float)j / m_width * tmpFreq) * m_scale + m_xOffset
+				, ((float)i / m_height * tmpFreq) * m_scale + m_yOffset }) - 0.5f;
+
+			vData.vertexPoints.y += noiseVal * tmpAmp;
+			normalization += tmpAmp;
+			tmpAmp /= 2.f * m_persistance;
+			tmpFreq *= m_lucnarity;
 
 		}
-		vData.vertexPoints.x = j - (m_width / 2.f); vData.vertexPoints.z = i - (m_height / 2.f);
+		vData.vertexPoints.x = j - (m_width / 2.f) * 0.5f; vData.vertexPoints.z = i - (m_height / 2.f) * 0.5f;
 		vData.textureCoord.x = (1.f / m_width) * j; vData.textureCoord.y = 1.f - (1.f / m_height) * i;
 
 		tmpVertex.push_back(vData);
@@ -275,7 +284,7 @@ void engin::TerrainGeneration::setBufferData(const std::vector<vertexData>& vDat
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_terrainMesh.getIBO());
 	if (!isSettedUp)
 	{
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData) * 51 * 51, nullptr, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData) * 201 * 201, nullptr, GL_DYNAMIC_DRAW);
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertexData), &((vertexData*)0)->vertexPoints);
 		glEnableVertexAttribArray(1);
@@ -285,7 +294,7 @@ void engin::TerrainGeneration::setBufferData(const std::vector<vertexData>& vDat
 		glEnableVertexAttribArray(3);
 		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(vertexData), &((vertexData*)0)->vertexNormal);
 
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * 51 * 51 * 6, nullptr, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * 201 * 201 * 6, nullptr, GL_DYNAMIC_DRAW);
 
 
 		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertexData) * vData.size(), &vData[0]);

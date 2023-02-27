@@ -11,10 +11,8 @@ engin::SceneGraph::SceneGraph()
 	m_sceneRenderer(std::make_unique<engin::SceneRenderer>())
 {
 	processMesh();
-	//addBase();
 	addTerrain();
-	addCubeEntt();
-	addSpotLit();
+	addDirectionalLit();
 
 
 }
@@ -68,6 +66,8 @@ void engin::SceneGraph::addDirectionalLit(){
 	m_enttList.emplace_back("Light");
 	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Light");
 	m_enttList[m_enttList.size() - 1].addComponent<LightComponent>(engin::LightType::DIRECTIONAL);
+	auto compo = m_enttList[m_enttList.size() - 1].getComponent<TransformComponent>();
+	compo->m_rotation = { 270.f,30.f,0.f };
 	currentYentt = &m_enttList[m_enttList.size() - 1];
 }
 void engin::SceneGraph::addPointLit(){

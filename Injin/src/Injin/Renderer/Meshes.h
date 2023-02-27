@@ -16,14 +16,6 @@ namespace engin
 		glm::vec2 textureCoord;
 		glm::vec3 vertexNormal;
 
-		//vertexData() {}
-		//~vertexData() {}
-		//vertexData(glm::vec3 pt,glm::vec3 col,glm::vec3 cord,glm::vec3 norm)
-		//	:vertexPoints(pt), vertexColor(col), textureCoord(cord),vertexNormal(norm)
-		//{
-		//
-		//}
-
 	};
 
 	class Meshes
@@ -68,8 +60,10 @@ namespace engin
 		int32_t m_octave, m_xOffset, m_yOffset,m_width = 5,m_height = 5;
 		float m_freq, m_amp, m_lucnarity, m_persistance,m_scale;
 		Meshes m_terrainMesh;
+		
 	private:
 		bool isSettedUp = false;
+		Noise noise;
 	public:
 		TerrainGeneration();
 		~TerrainGeneration();
