@@ -284,7 +284,10 @@ void engin::TerrainGeneration::generateNoiseMesh(std::vector<vertexData>& data, 
 				noiseVal = noise.noise2d({ (float)j / m_scale * tmpFreq + m_xOffset
 					, (float)i / m_scale * tmpFreq + m_yOffset }) * 2.f - 1.f;
 
-				vData.vertexPoints.y += noiseVal * tmpAmp;
+				if (i > m_fallOff && i < m_width - m_fallOff && j > m_fallOff && j < m_height - m_fallOff)
+					vData.vertexPoints.y += noiseVal * tmpAmp;
+				else
+					vData.vertexPoints.y += noiseVal;
 				tmpFreq *= m_lucnarity;
 				tmpAmp *= m_persistance;
 			}

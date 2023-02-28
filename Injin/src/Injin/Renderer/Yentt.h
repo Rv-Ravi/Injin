@@ -257,6 +257,8 @@ namespace engin {
 			ImGui::DragInt("Plane width", &m_terrain->m_width, 1, 0, 200.f);
 			ImGui::DragInt("Plane Height", &m_terrain->m_height, 1, 0, 200.f);
 
+			ImGui::DragInt("Fall off", &m_terrain->m_fallOff, 1, 0, 10.f);
+
 			if (ImGui::Button("Generate"))
 			{
 				m_terrain->generateTerrain();
