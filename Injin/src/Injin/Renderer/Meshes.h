@@ -57,8 +57,8 @@ namespace engin
 	class TerrainGeneration
 	{
 	public:
-		int32_t m_octave, m_xOffset, m_yOffset,m_width = 5,m_height = 5;
-		float m_freq, m_amp, m_lucnarity, m_persistance,m_scale;
+		int32_t m_octave,m_width = 5,m_height = 5;
+		float m_amp, m_lucnarity, m_persistance,m_scale, m_xOffset, m_yOffset;
 		Meshes m_terrainMesh;
 		
 	private:

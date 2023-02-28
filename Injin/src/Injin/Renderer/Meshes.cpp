@@ -208,7 +208,7 @@ std::vector<engin::vertexData> engin::line2D = {
 
 
 engin::TerrainGeneration::TerrainGeneration()
-	:m_octave(2), m_xOffset(0), m_yOffset(0), m_freq(1.2), m_amp(3.f), m_lucnarity(2.f),
+	:m_octave(2), m_xOffset(0), m_yOffset(0), m_amp(3.f), m_lucnarity(2.f),
 	m_persistance(0.5f), m_scale(15.f), m_terrainMesh("Terrain"),noise(121)
 {
 	generateTerrain();
@@ -227,49 +227,43 @@ void engin::TerrainGeneration::generateTerrain()
 	vData.vertexNormal = glm::vec3(0.f, 1.f, 0.f);
 
 	
-	for (uint16_t i = 0,j = 0; i <= m_height; j++)
+	for (uint16_t i = 0; i <= m_height; i++)
 	{
-		vData.vertexPoints.y = 0;
-		float tmpAmp = m_amp, tmpFreq = m_freq,normalization = 0;
-		for (uint16_t oct = m_octave; oct > 0; oct--)
+		for (uint16_t j = 0; j <= m_width; j++)
 		{
-			float noiseVal = noise.noise2d({ ((float)j / m_width * tmpFreq) * m_scale + m_xOffset
-				, ((float)i / m_height * tmpFreq) * m_scale + m_yOffset }) - 0.5f;
+			vData.vertexPoints.y = 0;
+			float tmpAmp = m_amp, tmpFreq = 1;
+			for (uint16_t oct = m_octave; oct > 0; oct--)
+			{
+				float noiseVal = noise.noise2d({ (float)j / m_scale * tmpFreq + m_xOffset
+					, (float)i / m_scale * tmpFreq + m_yOffset }) - 0.5f;
 
-			vData.vertexPoints.y += noiseVal * tmpAmp;
-			normalization += tmpAmp;
-			tmpAmp /= 2.f * m_persistance;
-			tmpFreq *= m_lucnarity;
+				vData.vertexPoints.y += noiseVal * tmpAmp;
+				tmpAmp *= m_persistance;
+				tmpFreq *= m_lucnarity;
 
+			}
+			vData.vertexPoints.x = j - (m_width / 2.f); vData.vertexPoints.z = i - (m_height / 2.f);
+			vData.textureCoord.x = (1.f / m_width) * j; vData.textureCoord.y = 1.f - (1.f / m_height) * i;
+			tmpVertex.push_back(vData);
 		}
-		vData.vertexPoints.x = j - (m_width / 2.f) * 0.5f; vData.vertexPoints.z = i - (m_height / 2.f) * 0.5f;
-		vData.textureCoord.x = (1.f / m_width) * j; vData.textureCoord.y = 1.f - (1.f / m_height) * i;
-
-		tmpVertex.push_back(vData);
-		if (j >= m_width )
-		{
-			i++;j = -1;
-		}
-		
 	}
 
-	for (uint32_t i = 0, j = 0; i < m_height; j++)
+	for (uint32_t i = 0; i < m_height ; i++)
 	{
-		uint32_t d1 = (m_width + 1) * (i + 1) + j,
-			d2 = (m_width + 1) * i + (1 + j),
-			d3 = (m_width + 1) * i + j;
 
-		tmpIndex.emplace_back(d1);
-		tmpIndex.emplace_back(d2);
-		tmpIndex.emplace_back(d3);
-		tmpIndex.emplace_back(d1);
-		tmpIndex.emplace_back(d1 + 1);
-		tmpIndex.emplace_back(d2);
-
-
-		if (j >= m_width - 1)
+		for (uint32_t j = 0; j < m_width; j++)
 		{
-			i++; j = -1;
+			uint32_t d1 = (m_width + 1) * (i + 1) + j,
+				d2 = (m_width + 1) * i + (1 + j),
+				d3 = (m_width + 1) * i + j;
+
+			tmpIndex.emplace_back(d1);
+			tmpIndex.emplace_back(d2);
+			tmpIndex.emplace_back(d3);
+			tmpIndex.emplace_back(d1);
+			tmpIndex.emplace_back(d1 + 1);
+			tmpIndex.emplace_back(d2);
 		}
 	}
 

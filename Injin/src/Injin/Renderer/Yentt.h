@@ -245,16 +245,15 @@ namespace engin {
 			ImGui::Text("Terrain Component: \n");
 
 
-			ImGui::DragFloat("Frequency", &m_terrain->m_freq, 0.001f, 0.f, 10.f, "%.4f");
-			ImGui::DragFloat("Amplitude", &m_terrain->m_amp, 0.001f, 0.f, 50.f, "%.4f");
-			ImGui::DragFloat("Persistance", &m_terrain->m_persistance, 0.001f, 0.f, 1.f, "%.4f");
-			ImGui::DragFloat("Lucnarity", &m_terrain->m_lucnarity, 0.001f, 0.f, 5.f, "%.4f");
+			ImGui::DragFloat("Amplitude", &m_terrain->m_amp, 0.01f, 0.f, 50.f, "%.2f");
+			ImGui::DragFloat("Persistance", &m_terrain->m_persistance, 0.001f, 0.0001f, 1.f, "%.4f");
+			ImGui::DragFloat("Lucnarity", &m_terrain->m_lucnarity, 0.01f, 0.f, 10.f, "%.2f");
 
-			ImGui::DragFloat("Scale", &m_terrain->m_scale, 0.001f, 1.f, 50.f, "%.4f");
+			ImGui::DragFloat("Scale", &m_terrain->m_scale, 0.01f, 1.f, 100.f, "%.4f");
 
 			ImGui::DragInt("Octave", &m_terrain->m_octave, 1, 0, 5.f);
-			ImGui::DragInt("X-Offset", &m_terrain->m_xOffset, 1, 0, 50.f);
-			ImGui::DragInt("Y-Offset", &m_terrain->m_yOffset, 1, 0, 50.f);
+			ImGui::DragFloat("X-Offset", &m_terrain->m_xOffset, 0.1f, 0.f, 50.f);
+			ImGui::DragFloat("Y-Offset", &m_terrain->m_yOffset, 0.1f, 0.f, 50.f);
 			ImGui::DragInt("Plane width", &m_terrain->m_width, 1, 0, 200.f);
 			ImGui::DragInt("Plane Height", &m_terrain->m_height, 1, 0, 200.f);
 
