@@ -222,51 +222,10 @@ void engin::TerrainGeneration::generateTerrain()
 {
 	std::vector<vertexData> tmpVertex;
 	std::vector<uint32_t> tmpIndex;
-	vertexData vData = vertexData();
-	vData.vertexColor = glm::vec3(1.f,0.f,0.f);
-	vData.vertexNormal = glm::vec3(0.f, 1.f, 0.f);
 
-	
-	for (uint16_t i = 0; i <= m_height; i++)
-	{
-		for (uint16_t j = 0; j <= m_width; j++)
-		{
-			vData.vertexPoints.y = 0;
-			float tmpAmp = m_amp, tmpFreq = 1;
-			for (uint16_t oct = m_octave; oct > 0; oct--)
-			{
-				float noiseVal = noise.noise2d({ (float)j / m_scale * tmpFreq + m_xOffset
-					, (float)i / m_scale * tmpFreq + m_yOffset }) - 0.5f;
-
-				vData.vertexPoints.y += noiseVal * tmpAmp;
-				tmpAmp *= m_persistance;
-				tmpFreq *= m_lucnarity;
-
-			}
-			vData.vertexPoints.x = j - (m_width / 2.f); vData.vertexPoints.z = i - (m_height / 2.f);
-			vData.textureCoord.x = (1.f / m_width) * j; vData.textureCoord.y = 1.f - (1.f / m_height) * i;
-			tmpVertex.push_back(vData);
-		}
-	}
-
-	for (uint32_t i = 0; i < m_height ; i++)
-	{
-
-		for (uint32_t j = 0; j < m_width; j++)
-		{
-			uint32_t d1 = (m_width + 1) * (i + 1) + j,
-				d2 = (m_width + 1) * i + (1 + j),
-				d3 = (m_width + 1) * i + j;
-
-			tmpIndex.emplace_back(d1);
-			tmpIndex.emplace_back(d2);
-			tmpIndex.emplace_back(d3);
-			tmpIndex.emplace_back(d1);
-			tmpIndex.emplace_back(d1 + 1);
-			tmpIndex.emplace_back(d2);
-		}
-	}
-
+	float minNoise = 100.f, maxNoise = -100.f;
+	generateNoiseMesh(tmpVertex, minNoise, maxNoise);
+	generateMeshIndex(tmpIndex);
 	m_terrainMesh.setDataSize(tmpVertex.size(), tmpIndex.size());
 	setBufferData(tmpVertex, tmpIndex);
 }
@@ -307,3 +266,54 @@ void engin::TerrainGeneration::setBufferData(const std::vector<vertexData>& vDat
 	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
+
+void engin::TerrainGeneration::generateNoiseMesh(std::vector<vertexData>& data, float& min, float& max)
+{
+	vertexData vData = vertexData();
+	vData.vertexColor = glm::vec3(1.f, 0.f, 0.f);
+	vData.vertexNormal = glm::vec3(0.f, 1.f, 0.f);
+
+	for (uint16_t i = 0; i <= m_height; i++)
+	{
+		for (uint16_t j = 0; j <= m_width; j++)
+		{
+			vData.vertexPoints.y = 0;
+			float tmpFreq = 1,noiseVal = 0, tmpAmp = m_amp;
+			for (uint16_t oct = m_octave; oct > 0; oct--)
+			{
+				noiseVal = noise.noise2d({ (float)j / m_scale * tmpFreq + m_xOffset
+					, (float)i / m_scale * tmpFreq + m_yOffset }) * 2.f - 1.f;
+
+				vData.vertexPoints.y += noiseVal * tmpAmp;
+				tmpFreq *= m_lucnarity;
+				tmpAmp *= m_persistance;
+			}
+			if (noiseVal > max) max = noiseVal;
+			if (noiseVal < min) min = noiseVal;
+			vData.vertexPoints.x = j - (m_width / 2.f); vData.vertexPoints.z = i - (m_height / 2.f);
+			vData.textureCoord.x = (1.f / m_width) * j; vData.textureCoord.y = 1.f - (1.f / m_height) * i;
+			data.push_back(vData);
+		}
+	}
+}
+
+void engin::TerrainGeneration::generateMeshIndex(std::vector<uint32_t>& data)
+{
+	for (uint32_t i = 0; i < m_height; i++)
+	{
+		for (uint32_t j = 0; j < m_width; j++)
+		{
+			uint32_t d1 = (m_width + 1) * (i + 1) + j,
+				d2 = (m_width + 1) * i + (1 + j),
+				d3 = (m_width + 1) * i + j;
+
+				data.emplace_back(d1);
+				data.emplace_back(d2);
+				data.emplace_back(d3);
+				data.emplace_back(d1);
+				data.emplace_back(d1 + 1);
+				data.emplace_back(d2);
+		}
+	}
+}
+

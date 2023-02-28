@@ -72,6 +72,8 @@ namespace engin
 
 	private:
 		void setBufferData(const std::vector<vertexData>& vertexData, const std::vector<uint32_t>& indexData = {});
+		void generateNoiseMesh(std::vector<vertexData>& data, float& min, float& max);
+		void generateMeshIndex(std::vector<uint32_t>& data);
 	};
 
 

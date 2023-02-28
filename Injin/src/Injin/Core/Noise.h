@@ -30,6 +30,7 @@ namespace engin
 		static float dot2d(float args[2], float(&& args1)[2]);
 		static void normalize2(float v[2]);
 		static void normalize3(float v[3]);
+		static float inverseLerp(float val1, float val2, float orgVal);
 
 	private:
 		void updateSeed(unsigned int seed = 1);

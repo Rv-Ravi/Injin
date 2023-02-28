@@ -86,6 +86,11 @@ void engin::Noise::normalize3(float v[3])
     v[2] = v[2] / s;
 }
 
+float engin::Noise::inverseLerp(float val1, float val2, float orgVal)
+{
+    return (orgVal - val1) / (val2 - val1);
+}
+
 void engin::Noise::updateSeed(unsigned int seed)
 {
     m_seed = seed;
