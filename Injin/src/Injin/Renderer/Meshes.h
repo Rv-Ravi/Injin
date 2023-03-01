@@ -57,10 +57,10 @@ namespace engin
 	class TerrainGeneration
 	{
 	public:
-		int32_t m_octave,m_width = 5,m_height = 5;
+		int32_t m_octave,m_width = 100,m_height = 100;
 		float m_amp, m_lucnarity, m_persistance,m_scale, m_xOffset, m_yOffset;
 		Meshes m_terrainMesh;
-		int32_t m_fallOff = 0;
+		float fallOffs = 0, fallOffe = 1.f;
 		
 	private:
 		bool isSettedUp = false;
@@ -75,6 +75,7 @@ namespace engin
 		void setBufferData(const std::vector<vertexData>& vertexData, const std::vector<uint32_t>& indexData = {});
 		void generateNoiseMesh(std::vector<vertexData>& data, float& min, float& max);
 		void generateMeshIndex(std::vector<uint32_t>& data);
+		float getFallOffValue(uint32_t p1,uint32_t p2);
 	};
 
 

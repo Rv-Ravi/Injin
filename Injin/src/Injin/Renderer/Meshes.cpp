@@ -208,8 +208,8 @@ std::vector<engin::vertexData> engin::line2D = {
 
 
 engin::TerrainGeneration::TerrainGeneration()
-	:m_octave(2), m_xOffset(0), m_yOffset(0), m_amp(3.f), m_lucnarity(2.f),
-	m_persistance(0.5f), m_scale(15.f), m_terrainMesh("Terrain"),noise(121)
+	:m_octave(2), m_xOffset(0), m_yOffset(0), m_amp(15.f), m_lucnarity(2.f),
+	m_persistance(0.35f), m_scale(28.f), m_terrainMesh("Terrain"),noise(121)
 {
 	generateTerrain();
 }
@@ -279,15 +279,14 @@ void engin::TerrainGeneration::generateNoiseMesh(std::vector<vertexData>& data, 
 		{
 			vData.vertexPoints.y = 0;
 			float tmpFreq = 1,noiseVal = 0, tmpAmp = m_amp;
+
+			float fValue = getFallOffValue(i, j);
 			for (uint16_t oct = m_octave; oct > 0; oct--)
 			{
 				noiseVal = noise.noise2d({ (float)j / m_scale * tmpFreq + m_xOffset
 					, (float)i / m_scale * tmpFreq + m_yOffset }) * 2.f - 1.f;
 
-				if (i > m_fallOff && i < m_width - m_fallOff && j > m_fallOff && j < m_height - m_fallOff)
-					vData.vertexPoints.y += noiseVal * tmpAmp;
-				else
-					vData.vertexPoints.y += noiseVal;
+				vData.vertexPoints.y += fValue * tmpAmp * noiseVal;
 				tmpFreq *= m_lucnarity;
 				tmpAmp *= m_persistance;
 			}
@@ -318,5 +317,20 @@ void engin::TerrainGeneration::generateMeshIndex(std::vector<uint32_t>& data)
 				data.emplace_back(d2);
 		}
 	}
+}
+
+float engin::TerrainGeneration::getFallOffValue(uint32_t i, uint32_t j)
+{
+	float x = j < (m_width / 2.f) ? j / (m_width / 2.f) : 1.f - (j / (m_width / 2.f) - 1.f),
+		y = i < (m_height / 2.f) ? i / (m_height / 2.f) : 1.f - (i / (m_height / 2.f) - 1.f),
+		value = std::min(x, y);
+
+	if (value > fallOffe)
+		value = fallOffe;
+	else if (value < fallOffs)
+		value = fallOffs;
+	else
+		value = Noise::inverseLerp(fallOffs, fallOffe, value);
+	return value;
 }
 
