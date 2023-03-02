@@ -24,8 +24,8 @@ namespace engin {
 	};
 
 	struct TextureMaterial {
-		std::string m_diffuse = "";
-		std::string m_specular = "";
+		Texture* m_diffuse = nullptr;
+		Texture* m_specular = nullptr;
 	};
 	struct Component {
 		std::string m_compId;
@@ -124,27 +124,79 @@ namespace engin {
 				ImGui::ColorEdit3("Material specular color", &m_colMaterial.m_specular.x);
 			}
 			else {
-				if (ImGui::BeginCombo("##Diffuse texture", m_texMaterial.m_diffuse.c_str()))
+				std::string nameDiff = (m_texMaterial.m_diffuse == nullptr) ? "None" : m_texMaterial.m_diffuse->m_texName;
+				if (ImGui::BeginCombo("##Diffuse texture", nameDiff.c_str()))
 				{
 					for (auto& data:Texture::m_textureList)
 					{
-						bool is_selected = (m_texMaterial.m_diffuse.c_str() == data.first.c_str());
-						if (ImGui::Selectable(data.first.c_str(), is_selected))
+						bool is_selected = (nameDiff == data);
+						if (ImGui::Selectable(data.c_str(), is_selected))
 						{
-							m_texMaterial.m_diffuse = data.first;
+							if (data == "None")
+							{
+								if(m_texMaterial.m_diffuse)
+									delete m_texMaterial.m_diffuse;
+								m_texMaterial.m_diffuse = nullptr;
+							}
+							else {
+								if (m_texMaterial.m_diffuse && data != m_texMaterial.m_diffuse->m_texName)
+								{
+									delete m_texMaterial.m_diffuse;
+									uint32_t id = Texture::getTexture(data);
+									if (id == 0)
+										m_texMaterial.m_diffuse = new Texture(data);
+									else
+										m_texMaterial.m_diffuse = new Texture(data, id);
+								}
+								else
+								{
+									uint32_t id = Texture::getTexture(data);
+									if (id == 0)
+										m_texMaterial.m_diffuse = new Texture(data);
+									else
+										m_texMaterial.m_diffuse = new Texture(data, id);
+								}
+							}
 							if (is_selected) ImGui::SetItemDefaultFocus();
 						}
 					}
 					ImGui::EndCombo();
 				}
-				if (ImGui::BeginCombo("##Specular texture", m_texMaterial.m_specular.c_str()))
+				std::string nameSpec = m_texMaterial.m_specular == nullptr ? "None" : m_texMaterial.m_specular->m_texName;
+				if (ImGui::BeginCombo("##Specular texture", nameSpec.c_str()))
 				{
 					for (auto& data : Texture::m_textureList)
 					{
-						bool is_selected = (m_texMaterial.m_specular.c_str() == data.first.c_str());
-						if (ImGui::Selectable(data.first.c_str(), is_selected))
+						bool is_selected = (nameSpec == data);
+						
+						if (ImGui::Selectable(data.c_str(), is_selected))
 						{
-							m_texMaterial.m_specular = data.first;
+							if (data == "None")
+							{
+								if (m_texMaterial.m_specular)
+									delete m_texMaterial.m_specular;
+								m_texMaterial.m_specular = nullptr;
+							}
+							else {
+								if (m_texMaterial.m_specular && data != m_texMaterial.m_specular->m_texName)
+								{
+									delete m_texMaterial.m_specular;
+									uint32_t id = Texture::getTexture(data);
+									if (id == 0)
+										m_texMaterial.m_specular = new Texture(data);
+									else
+										m_texMaterial.m_specular = new Texture(data, id);
+								}
+								else
+								{
+									uint32_t id = Texture::getTexture(data);
+									if (id == 0)
+										m_texMaterial.m_specular = new Texture(data);
+									else
+										m_texMaterial.m_specular = new Texture(data, id);
+								}
+							}
+							
 							if (is_selected) ImGui::SetItemDefaultFocus();
 						}
 					}

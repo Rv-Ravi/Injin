@@ -12,13 +12,16 @@ namespace engin
 	{
 
 	public:
-		static std::vector<std::pair<std::string,Texture>> m_textureList;
+		static std::vector<std::string> m_textureList;
+		static std::unordered_map<std::string, uint32_t> m_processedTexture;
+		std::string m_texName;
 	private:
 		uint32_t m_textureId;	
-
+		
 	public:
 		Texture() = default;
 		Texture(const std::string& texture);
+		Texture(const std::string& texture, uint32_t id);
 		~Texture();
 
 		uint32_t getTxtureId() const {
@@ -27,7 +30,10 @@ namespace engin
 
 		void bindTextureUnit(uint32_t unit);
 
-		static Texture* getTexture(const std::string& texture);
+		static uint32_t getTexture(const std::string& texture);
+
+		void delTexture();
+		static void clearTexture();
 
 	private:
 		void getTextureFile(const std::string& texture);

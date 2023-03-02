@@ -3,15 +3,24 @@
 #include <iostream>
 #include <stb/stb_image.h>
 
-std::vector<std::pair<std::string, engin::Texture>> engin::Texture::m_textureList = {};
+std::vector<std::string> engin::Texture::m_textureList = {"None"};
+std::unordered_map<std::string, uint32_t> engin::Texture::m_processedTexture = {};
 
 engin::Texture::Texture(const std::string& texture)
+	:m_texName(texture)
 {
 	processTexture(texture);
+	m_processedTexture[texture] = m_textureId;
+}
+
+engin::Texture::Texture(const std::string& texture, uint32_t id)
+	:m_texName(texture),m_textureId(id)
+{
 }
 
 engin::Texture::~Texture()
 {
+	delTexture();
 }
 
 void engin::Texture::bindTextureUnit(uint32_t unit)
@@ -19,15 +28,26 @@ void engin::Texture::bindTextureUnit(uint32_t unit)
 	glBindTextureUnit(unit, m_textureId);
 }
 
-engin::Texture* engin::Texture::getTexture(const std::string& texture)
+uint32_t engin::Texture::getTexture(const std::string& texture)
 {
-	auto iterator = std::find_if(m_textureList.begin(), m_textureList.end(), [&](std::pair<std::string, engin::Texture>& pair)
-		{
-			if (pair.first == texture)
-				return true;
-			return false;
-		});
-	return (iterator != m_textureList.end()) ? &(*iterator).second : nullptr;
+	auto iterator = m_processedTexture.find(texture);
+	return (iterator != m_processedTexture.end()) ? iterator->second : 0;
+}
+
+void engin::Texture::delTexture()
+{
+	m_textureId = 0;
+	m_texName = "";
+}
+
+void engin::Texture::clearTexture()
+{
+	for (auto& value : m_processedTexture)
+	{
+		if (value.second != 0)
+			glDeleteTextures(1, &value.second);
+	}
+	std::cout << "All done\n";
 }
 
 void engin::Texture::getTextureFile(const std::string& texture)

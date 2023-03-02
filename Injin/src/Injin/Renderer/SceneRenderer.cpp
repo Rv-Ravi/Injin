@@ -32,13 +32,14 @@ engin::SceneRenderer::SceneRenderer()
 	for (auto& file : std::filesystem::directory_iterator(curtPath.string() + std::string("\\assets\\Textures")))
 	{
 		if(file.is_regular_file())
-		Texture::m_textureList.emplace_back(file.path().string(), Texture(file.path().string()));
+		Texture::m_textureList.emplace_back(file.path().string());
 	}
 }
 
 engin::SceneRenderer::~SceneRenderer()
 {
 	clearPrograms();
+	Texture::clearTexture();
 }
 
 void engin::SceneRenderer::render(SceneGraph* scene)
@@ -63,16 +64,14 @@ void engin::SceneRenderer::render(SceneGraph* scene)
 
 			if (material->isTexture)
 			{
-				auto texture1 = Texture::getTexture(material->m_texMaterial.m_diffuse);
-				auto texture2 = Texture::getTexture(material->m_texMaterial.m_specular);
-				if (texture1)
+				if (material->m_texMaterial.m_diffuse)
 				{
-					texture1->bindTextureUnit(0);
+					material->m_texMaterial.m_diffuse->bindTextureUnit(0);
 					m_shaderProgram[2].setUniValue("diffTexUnit", 0);
 				}
-				if (texture2)
+				if (material->m_texMaterial.m_specular)
 				{
-					texture2->bindTextureUnit(1);
+					material->m_texMaterial.m_specular->bindTextureUnit(1);
 					m_shaderProgram[2].setUniValue("specTexUnit", 1);
 				}
 			}

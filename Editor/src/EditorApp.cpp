@@ -18,5 +18,6 @@ int main()
 
 	EditorApp* app = new EditorApp();
 	app->runApp();
+	delete app;
 	return 0;
 }
