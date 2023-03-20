@@ -71,6 +71,11 @@ namespace engin {
 		void createProgram();
 		void processEntt(ShaderProgram& prog,engin::Yentt& entt);
 		void processLight(engin::Yentt& entt);
+
+		static void setDepth(RenderComponent* component);
+		static void setStencil(RenderComponent* component);
+		static void setFCull(RenderComponent* component);
+		static void setBlend(RenderComponent* component);
 		
 		
 

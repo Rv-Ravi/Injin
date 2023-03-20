@@ -11,8 +11,10 @@ engin::SceneGraph::SceneGraph()
 	m_sceneRenderer(std::make_unique<engin::SceneRenderer>())
 {
 	processMesh();
+	addSquareEntt();
+	addSquareEntt();
 	addCubeEntt();
-	//addTerrain();
+	addCubeEntt();
 	addDirectionalLit();
 
 
@@ -29,16 +31,17 @@ void engin::SceneGraph::addEntt()
 
 void engin::SceneGraph::addSquareEntt()
 {
-	m_enttList.emplace_back("Square");
+	m_enttList.emplace_back("Square-" + std::to_string(m_enttList.size()));
 	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Object");
 	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Square"));
+	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>();
 	m_enttList[m_enttList.size() - 1].addComponent<RenderComponent>();
 	currentYentt = &m_enttList[m_enttList.size() - 1];
 }
 
 void engin::SceneGraph::addCubeEntt()
 {
-	m_enttList.emplace_back("Cube");
+	m_enttList.emplace_back("Cube-" + std::to_string(m_enttList.size()));
 	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Object");
 	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Cube"));
 	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>();
@@ -49,7 +52,7 @@ void engin::SceneGraph::addCubeEntt()
 
 void engin::SceneGraph::addTriangleEntt()
 {
-	m_enttList.emplace_back("Triangle");
+	m_enttList.emplace_back("Triangle-" +std::to_string(m_enttList.size()));
 	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Object");
 	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Triangle"));
 	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>();
@@ -59,7 +62,7 @@ void engin::SceneGraph::addTriangleEntt()
 
 void engin::SceneGraph::addBase()
 {
-	m_enttList.emplace_back("Base");
+	m_enttList.emplace_back("Base-" + std::to_string(m_enttList.size()));
 	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Base");
 	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Square"));
 	auto compo = m_enttList[m_enttList.size() - 1].getComponent<TransformComponent>();
@@ -67,7 +70,7 @@ void engin::SceneGraph::addBase()
 }
 
 void engin::SceneGraph::addDirectionalLit(){
-	m_enttList.emplace_back("Light");
+	m_enttList.emplace_back("Light-" + std::to_string(m_enttList.size()));
 	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Light");
 	m_enttList[m_enttList.size() - 1].addComponent<LightComponent>(engin::LightType::DIRECTIONAL);
 	auto compo = m_enttList[m_enttList.size() - 1].getComponent<TransformComponent>();
@@ -75,13 +78,13 @@ void engin::SceneGraph::addDirectionalLit(){
 	currentYentt = &m_enttList[m_enttList.size() - 1];
 }
 void engin::SceneGraph::addPointLit(){
-	m_enttList.emplace_back("Light");
+	m_enttList.emplace_back("Light-" + std::to_string(m_enttList.size()));
 	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Light");
 	m_enttList[m_enttList.size() - 1].addComponent<LightComponent>(engin::LightType::POINT);
 	currentYentt = &m_enttList[m_enttList.size() - 1];
 }
 void engin::SceneGraph::addSpotLit() {
-	m_enttList.emplace_back("Light");
+	m_enttList.emplace_back("Light-" + std::to_string(m_enttList.size()));
 	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Light");
 	m_enttList[m_enttList.size() - 1].addComponent<LightComponent>(engin::LightType::SPOT);
 	currentYentt = &m_enttList[m_enttList.size() - 1];
@@ -89,7 +92,7 @@ void engin::SceneGraph::addSpotLit() {
 
 void engin::SceneGraph::addTerrain()
 {
-	m_enttList.emplace_back("Terrain");
+	m_enttList.emplace_back("Terrain-" + std::to_string(m_enttList.size()));
 	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Terrain");
 	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>();
 	m_enttList[m_enttList.size() - 1].addComponent<TerrainComponent>();

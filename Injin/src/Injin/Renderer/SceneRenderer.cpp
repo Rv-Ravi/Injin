@@ -62,9 +62,16 @@ void engin::SceneRenderer::render(SceneGraph* scene)
 		std::string& tmpTag = entt.getComponent<TagComponent>()->m_tagName;
 		if (tmpTag == "Object" || tmpTag == "Terrain")
 		{
-			auto flg = entt.getComponent<RenderComponent>()->m_render;
-			if (flg)
+			auto flg = entt.getComponent<RenderComponent>();
+			if (flg && flg->m_render)
 			{	
+
+				setDepth(flg);
+				setStencil(flg);
+				setFCull(flg);
+				setBlend(flg);
+
+
 				processEntt(m_shaderProgram[2],entt);	
 			}
 
@@ -97,7 +104,7 @@ void engin::SceneRenderer::processEntt(ShaderProgram& prog, engin::Yentt& entt)
 		, &entt.getComponent<TransformComponent>()->getNormalMatrix()[0].x);
 	auto material = entt.getComponent<MaterialComponent>();
 
-	if (material->isTexture)
+	if (material && material->isTexture)
 	{
 		if (material->m_texMaterial.m_diffuse)
 		{
@@ -155,6 +162,81 @@ void engin::SceneRenderer::processLight(engin::Yentt& entt)
 	shader::setUniformBufferData("Light", sizeof(glm::vec4) * 3,
 		sizeof(int), &type);
 }
+
+void engin::SceneRenderer::setDepth(RenderComponent* component)
+{
+	if (component->m_depth)
+	{
+		glEnable(GL_DEPTH_TEST);
+		glDepthMask(component->m_dMask);
+		glDepthFunc(component->m_dFunc);
+	}
+	else
+		glDisable(GL_DEPTH_TEST);
+}
+
+void engin::SceneRenderer::setStencil(RenderComponent* component)
+{
+	if (component->m_stencil)
+	{
+		glEnable(GL_STENCIL_TEST);
+		if (component->m_sMaskFace == GL_FRONT_AND_BACK)
+		{
+			glStencilMaskSeparate(component->m_sMaskFace, component->m_sMask);
+		}
+		else if (component->m_sMaskFace == GL_FRONT)
+		{
+			glStencilMaskSeparate(component->m_sMaskFace, component->m_sMask);
+			glStencilMaskSeparate(GL_BACK, 0x00);
+		}
+		else if (component->m_sMaskFace == GL_BACK)
+		{
+			glStencilMaskSeparate(component->m_sMaskFace, component->m_sMask);
+			glStencilMaskSeparate(GL_FRONT, 0x00);
+		}
+
+		if (component->m_sOpFace == GL_FRONT_AND_BACK)
+		{
+			glStencilOpSeparate(component->m_sOpFace, GL_KEEP, GL_KEEP, GL_REPLACE);
+		}
+		else if (component->m_sOpFace == GL_FRONT)
+		{
+			glStencilOpSeparate(component->m_sOpFace, GL_KEEP, GL_KEEP, GL_REPLACE);
+			glStencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_KEEP);
+		}
+		else if (component->m_sOpFace == GL_BACK)
+		{
+			glStencilOpSeparate(component->m_sOpFace, GL_KEEP, GL_KEEP, GL_REPLACE);
+			glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_KEEP, GL_KEEP);
+		}
+
+		if (component->m_sFuncFace == GL_FRONT_AND_BACK)
+		{
+			glStencilFuncSeparate(component->m_sFuncFace, component->m_sFunc, component->m_sRefVal, component->m_sRefMask);
+		}
+		else if (component->m_sFuncFace == GL_FRONT)
+		{
+			glStencilFuncSeparate(component->m_sFuncFace, component->m_sFunc, component->m_sRefVal, component->m_sRefMask);
+			glStencilFuncSeparate(GL_BACK, GL_NEVER, 0, 0x00);
+		}
+		else if (component->m_sFuncFace == GL_BACK)
+		{
+			glStencilFuncSeparate(component->m_sFuncFace, component->m_sFunc, component->m_sRefVal, component->m_sRefMask);
+			glStencilFuncSeparate(GL_FRONT, GL_NEVER, 0, 0x00);
+		}
+	}
+	else
+		glDisable(GL_STENCIL_TEST);
+}
+
+void engin::SceneRenderer::setFCull(RenderComponent* component)
+{
+}
+
+void engin::SceneRenderer::setBlend(RenderComponent* component)
+{
+}
+
 
 void engin::SceneRenderer::clearPrograms()
 {

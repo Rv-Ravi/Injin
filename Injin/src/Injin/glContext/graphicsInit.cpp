@@ -17,7 +17,11 @@ engin::grpicsInit::~grpicsInit()
 
 void engin::grpicsInit::clrBuffr()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glStencilMask(0xFF);
+	glDepthMask(GL_TRUE);
+	glClearDepth(1.f);
+	glClearStencil(0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
 void engin::grpicsInit::clrColrBuffr(const glm::vec4& bgColor)
@@ -32,7 +36,5 @@ void engin::grpicsInit::grpicInit()
 		WindowGL::terminate();
 		exit(1);
 	}
-
-	glEnable(GL_DEPTH_TEST);
 }
 

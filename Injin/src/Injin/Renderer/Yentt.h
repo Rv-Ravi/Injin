@@ -125,7 +125,7 @@ namespace engin {
 			}
 			else {
 				std::string nameDiff = (m_texMaterial.m_diffuse == nullptr) ? "None" : m_texMaterial.m_diffuse->m_texName;
-				if (ImGui::BeginCombo("##Diffuse texture", nameDiff.c_str()))
+				if (ImGui::BeginCombo("Diffuse texture", nameDiff.c_str()))
 				{
 					for (auto& data:Texture::m_textureList)
 					{
@@ -163,7 +163,7 @@ namespace engin {
 					ImGui::EndCombo();
 				}
 				std::string nameSpec = m_texMaterial.m_specular == nullptr ? "None" : m_texMaterial.m_specular->m_texName;
-				if (ImGui::BeginCombo("##Specular texture", nameSpec.c_str()))
+				if (ImGui::BeginCombo("Specular texture", nameSpec.c_str()))
 				{
 					for (auto& data : Texture::m_textureList)
 					{
@@ -230,7 +230,7 @@ namespace engin {
 			ImGui::Text("Light Component: \n");
 			std::vector<std::string> litVal = { "Directional Light","Point Light","Spot Light" };
 			bool is_selected;
-			if (ImGui::BeginCombo("##Light Type", litVal[(uint16_t)m_litTyp].c_str()))
+			if (ImGui::BeginCombo("Light Type", litVal[(uint16_t)m_litTyp].c_str()))
 			{
 				is_selected = (litVal[(uint16_t)m_litTyp].c_str() == "Directional Light");
 				if (ImGui::Selectable("Directional Light", is_selected))
@@ -322,16 +322,115 @@ namespace engin {
 
 	struct RenderComponent : public Component
 	{
-		bool m_render = true,m_depth = true, m_stencil = false;
+		bool m_render = true,m_depth = true, m_stencil = false,m_dMask = true;
+
+		uint16_t m_dFunc = GL_LESS, m_sFunc = GL_ALWAYS,
+			m_sOpFace = GL_FRONT,m_sFuncFace = GL_FRONT_AND_BACK,m_sMaskFace = GL_FRONT_AND_BACK;
+		int32_t m_sMask = 0,m_sRefVal = 1,m_sRefMask = 0xFF;
+
+
 
 		RenderComponent() : Component(typeid(RenderComponent).name()) {}
 		~RenderComponent(){}
 
 		void ImGuiWindow()
 		{
+			std::array<std::string, 8> funName = {
+							"NEVER",
+							"LESS",
+							"EQUAL",
+							"LEQUAL",
+							"GREATER",
+							"NOTEQUAL",
+							"GEQUAL",
+							"ALWAYS",
+			};
+			std::array<std::string, 9> faceName = {
+				"FRONT",
+				"BACK",
+				"LEFT",
+				"RIGHT",
+				"FRONT AND BACK"
+			};
 			ImGui::Checkbox("Render Component: \n",&m_render);
 
+			ImGui::Checkbox("Depth", &m_depth);
+			ImGui::SameLine(0);
+			ImGui::Checkbox("Stencil", &m_stencil);
+			ImGui::Text("\n\n");
+			if (m_depth)
+			{
+				ImGui::Text("Depth Functions: \n");
+				ImGui::Checkbox("Mask Value\n\n", &m_dMask);
+				funcName("Function Depth", funName, m_dFunc);
+			}
+			ImGui::Text("\n\n");
+			if (m_stencil)
+			{
+				ImGui::Text("Stencil Functions: \n");
+				ImGui::DragInt("Mask value", &m_sMask, 1.f, 0, 255);
+				ImGui::DragInt("Reference value", &m_sRefVal, 1.f, 0, 255);
+				ImGui::DragInt("Reference Mask value", &m_sRefMask, 1.f, 0, 255);
+
+				funcName("Function Stencil", funName, m_sFunc);
+				faceStencil("Mask Face Stencil", faceName, m_sMaskFace);
+				if (ImGui::BeginCombo("Operation Face Stencil", faceName[m_sOpFace - 0x0404].c_str()))
+				{
+					for (uint16_t i = 0; i < 5; i++)
+					{
+						bool is_selected = (faceName[m_sOpFace - 0x0404] == faceName[i]);
+						if (ImGui::Selectable(faceName[i].c_str(), is_selected))
+						{
+
+							m_sOpFace = 0x0404 + i;
+							if (is_selected) ImGui::SetItemDefaultFocus();
+						}
+					}
+
+					ImGui::EndCombo();
+				}
+				faceStencil("Function Face Stencil", faceName, m_sFuncFace);
+			}
 		}
+
+		private:
+			void faceStencil(const char* name, std::array<std::string, 9>& fName, uint16_t& face)
+			{
+				if (ImGui::BeginCombo(name, fName[face - 0x0404].c_str()))
+				{
+					for (uint16_t i = 0; i < 5; i++)
+					{
+						bool is_selected = (fName[face - 0x0404] == fName[i]);
+						if (ImGui::Selectable(fName[i].c_str(), is_selected))
+						{
+							
+							face = 0x0404 + i;
+							std::cout << name << " " << face << " " << fName[face - 0x0404] << std::endl;
+							if (is_selected) ImGui::SetItemDefaultFocus();
+						}
+					}
+
+					ImGui::EndCombo();
+				}
+			}
+
+			void funcName(const char* name, std::array<std::string, 8>& fName, uint16_t& func)
+			{
+				if (ImGui::BeginCombo(name, fName[func - 512].c_str()))
+				{
+					for (uint16_t i = 0; i < 8; i++)
+					{
+						bool is_selected = (fName[func - 512] == fName[i]);
+						if (ImGui::Selectable(fName[i].c_str(), is_selected))
+						{
+							func = 512 + i;
+							if (is_selected) ImGui::SetItemDefaultFocus();
+						}
+					}
+
+					ImGui::EndCombo();
+				}
+			}
 	};
 
 	class Yentt {
