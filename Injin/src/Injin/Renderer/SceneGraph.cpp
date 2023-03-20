@@ -11,7 +11,8 @@ engin::SceneGraph::SceneGraph()
 	m_sceneRenderer(std::make_unique<engin::SceneRenderer>())
 {
 	processMesh();
-	addTerrain();
+	addCubeEntt();
+	//addTerrain();
 	addDirectionalLit();
 
 
@@ -31,7 +32,7 @@ void engin::SceneGraph::addSquareEntt()
 	m_enttList.emplace_back("Square");
 	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Object");
 	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Square"));
-
+	m_enttList[m_enttList.size() - 1].addComponent<RenderComponent>();
 	currentYentt = &m_enttList[m_enttList.size() - 1];
 }
 
@@ -41,6 +42,8 @@ void engin::SceneGraph::addCubeEntt()
 	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Object");
 	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Cube"));
 	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>();
+	m_enttList[m_enttList.size() - 1].addComponent<RenderComponent>();
+	
 	currentYentt = &m_enttList[m_enttList.size() - 1];
 }
 
@@ -50,6 +53,7 @@ void engin::SceneGraph::addTriangleEntt()
 	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Object");
 	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Triangle"));
 	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>();
+	m_enttList[m_enttList.size() - 1].addComponent<RenderComponent>();
 	currentYentt = &m_enttList[m_enttList.size() - 1];
 }
 
@@ -91,6 +95,7 @@ void engin::SceneGraph::addTerrain()
 	m_enttList[m_enttList.size() - 1].addComponent<TerrainComponent>();
 	auto terrain = m_enttList[m_enttList.size() - 1].getComponent<TerrainComponent>();
 	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(&terrain->m_terrain->m_terrainMesh);
+	m_enttList[m_enttList.size() - 1].addComponent<RenderComponent>();
 	currentYentt = &m_enttList[m_enttList.size() - 1];
 }
 

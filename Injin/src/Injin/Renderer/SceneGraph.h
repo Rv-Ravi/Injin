@@ -69,6 +69,8 @@ namespace engin {
 		
 	private:
 		void createProgram();
+		void processEntt(ShaderProgram& prog,engin::Yentt& entt);
+		void processLight(engin::Yentt& entt);
 		
 		
 

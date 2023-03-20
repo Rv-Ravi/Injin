@@ -320,6 +320,20 @@ namespace engin {
 
 	};
 
+	struct RenderComponent : public Component
+	{
+		bool m_render = true,m_depth = true, m_stencil = false;
+
+		RenderComponent() : Component(typeid(RenderComponent).name()) {}
+		~RenderComponent(){}
+
+		void ImGuiWindow()
+		{
+			ImGui::Checkbox("Render Component: \n",&m_render);
+
+		}
+	};
+
 	class Yentt {
 	private:
 		static std::vector<Component*>::iterator tempComp;
