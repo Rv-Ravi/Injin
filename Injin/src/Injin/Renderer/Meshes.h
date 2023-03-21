@@ -76,6 +76,7 @@ namespace engin
 		void generateNoiseMesh(std::vector<vertexData>& data, float& min, float& max);
 		void generateMeshIndex(std::vector<uint32_t>& data);
 		float getFallOffValue(uint32_t p1,uint32_t p2);
+		glm::vec3 calNormals(glm::vec3& pts);
 	};
 
 
