@@ -322,10 +322,11 @@ namespace engin {
 
 	struct RenderComponent : public Component
 	{
-		bool m_render = true,m_depth = true, m_stencil = false,m_dMask = true;
+		bool m_render = true,m_depth = true, m_stencil = false,m_dMask = true,m_fCull = false;
 
 		uint16_t m_dFunc = GL_LESS, m_sFunc = GL_ALWAYS,
-			m_sOpFace = GL_FRONT,m_sFuncFace = GL_FRONT_AND_BACK,m_sMaskFace = GL_FRONT_AND_BACK;
+			m_sOpFace = GL_FRONT,m_sFuncFace = GL_FRONT_AND_BACK,m_sMaskFace = GL_FRONT_AND_BACK,
+			m_cullFace = GL_BACK,m_frontFace = GL_CCW;
 		int32_t m_sMask = 0,m_sRefVal = 1,m_sRefMask = 0xFF;
 
 
@@ -345,7 +346,7 @@ namespace engin {
 							"GEQUAL",
 							"ALWAYS",
 			};
-			std::array<std::string, 9> faceName = {
+			std::array<std::string, 5> faceName = {
 				"FRONT",
 				"BACK",
 				"LEFT",
@@ -357,6 +358,8 @@ namespace engin {
 			ImGui::Checkbox("Depth", &m_depth);
 			ImGui::SameLine(0);
 			ImGui::Checkbox("Stencil", &m_stencil);
+			ImGui::SameLine(0);
+			ImGui::Checkbox("Face Cull", &m_fCull);
 			ImGui::Text("\n\n");
 			if (m_depth)
 			{
@@ -374,27 +377,50 @@ namespace engin {
 
 				funcName("Function Stencil", funName, m_sFunc);
 				faceStencil("Mask Face Stencil", faceName, m_sMaskFace);
-				if (ImGui::BeginCombo("Operation Face Stencil", faceName[m_sOpFace - 0x0404].c_str()))
+				faceStencil("Operation Face Stencil", faceName, m_sOpFace);
+				faceStencil("Function Face Stencil", faceName, m_sFuncFace);
+			}
+			ImGui::Text("\n\n");
+			if (m_fCull)
+			{
+				std::array<std::string, 2> fFace = {
+					"Clockwise",
+					"Counter Clockwise"
+				};
+				ImGui::Text("Face culling Functions: \n");
+				if (ImGui::BeginCombo("Cull Face", faceName[m_cullFace - 0x0404].c_str()))
 				{
-					for (uint16_t i = 0; i < 5; i++)
+					for (uint16_t i = 0; i < 2; i++)
 					{
-						bool is_selected = (faceName[m_sOpFace - 0x0404] == faceName[i]);
+						bool is_selected = (faceName[m_cullFace - 0x0404] == faceName[i]);
 						if (ImGui::Selectable(faceName[i].c_str(), is_selected))
 						{
-
-							m_sOpFace = 0x0404 + i;
+							m_cullFace = 0x0404 + i;
 							if (is_selected) ImGui::SetItemDefaultFocus();
 						}
 					}
 
 					ImGui::EndCombo();
 				}
-				faceStencil("Function Face Stencil", faceName, m_sFuncFace);
+				if (ImGui::BeginCombo("Front Facing", fFace[m_frontFace - 0x0900].c_str()))
+				{
+					for (uint16_t i = 0; i < 2; i++)
+					{
+						bool is_selected = (fFace[m_frontFace - 0x0900] == fFace[i]);
+						if (ImGui::Selectable(fFace[i].c_str(), is_selected))
+						{
+							m_frontFace = 0x0900 + i;
+							if (is_selected) ImGui::SetItemDefaultFocus();
+						}
+					}
+
+					ImGui::EndCombo();
+				}
 			}
 		}
 
 		private:
-			void faceStencil(const char* name, std::array<std::string, 9>& fName, uint16_t& face)
+			void faceStencil(const char* name, std::array<std::string, 5>& fName, uint16_t& face)
 			{
 				if (ImGui::BeginCombo(name, fName[face - 0x0404].c_str()))
 				{
@@ -403,9 +429,7 @@ namespace engin {
 						bool is_selected = (fName[face - 0x0404] == fName[i]);
 						if (ImGui::Selectable(fName[i].c_str(), is_selected))
 						{
-							
 							face = 0x0404 + i;
-							std::cout << name << " " << face << " " << fName[face - 0x0404] << std::endl;
 							if (is_selected) ImGui::SetItemDefaultFocus();
 						}
 					}

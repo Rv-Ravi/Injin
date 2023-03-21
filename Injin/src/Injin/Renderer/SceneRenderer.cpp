@@ -233,6 +233,16 @@ void engin::SceneRenderer::setStencil(RenderComponent* component)
 
 void engin::SceneRenderer::setFCull(RenderComponent* component)
 {
+	if (component->m_fCull)
+	{
+		glEnable(GL_CULL_FACE);
+		glFrontFace(component->m_frontFace);
+		glCullFace(component->m_cullFace);
+	}
+	else
+	{
+		glDisable(GL_CULL_FACE);
+	}
 }
 
 void engin::SceneRenderer::setBlend(RenderComponent* component)
