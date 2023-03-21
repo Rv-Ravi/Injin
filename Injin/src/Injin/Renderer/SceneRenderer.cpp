@@ -88,7 +88,7 @@ void engin::SceneRenderer::createProgram()
 	auto currntPath = fileSys::current_path();
 
 	m_shaderProgram.emplace_back(currntPath.string() + std::string("\\assets\\Shaders\\simpleObj.glsl"));
-	m_shaderProgram.emplace_back(currntPath.string() + std::string("\\assets\\Shaders\\axisLine.glsl"));
+	m_shaderProgram.emplace_back(currntPath.string() + std::string("\\assets\\Shaders\\simpLightShader.glsl"));
 	m_shaderProgram.emplace_back(currntPath.string() + std::string("\\assets\\Shaders\\multiLitPhong.glsl"));
 
 }

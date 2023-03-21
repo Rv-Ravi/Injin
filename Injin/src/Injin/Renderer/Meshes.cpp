@@ -284,7 +284,6 @@ void engin::TerrainGeneration::generateNoiseMesh(std::vector<vertexData>& data, 
 {
 	vertexData vData = vertexData();
 	vData.vertexColor = glm::vec3(1.f, 1.f, 1.f);
-
 	for (uint16_t i = 0; i <= m_height; i++)
 	{
 		for (uint16_t j = 0; j <= m_width; j++)
@@ -302,10 +301,10 @@ void engin::TerrainGeneration::generateNoiseMesh(std::vector<vertexData>& data, 
 				tmpFreq *= m_lucnarity;
 				tmpAmp *= m_persistance;
 			}
-			if (noiseVal > max) max = noiseVal;
-			if (noiseVal < min) min = noiseVal;
-			
 			if (y_pos < fallOffe) y_pos = fallOffe;
+			if (y_pos > max) max = y_pos;
+			if (y_pos < min) min = y_pos;
+			
 			vData.vertexPoints.y = y_pos * m_amp;
 			vData.vertexPoints.x = j - (m_width / 2.f); vData.vertexPoints.z = i - (m_height / 2.f);
 			vData.textureCoord.x = (1.f / m_width) * j; vData.textureCoord.y = 1.f - (1.f / m_height) * i;
@@ -314,6 +313,11 @@ void engin::TerrainGeneration::generateNoiseMesh(std::vector<vertexData>& data, 
 
 			data.push_back(vData);
 		}
+	}
+	for (uint32_t i = 0; i < data.size(); i++)
+	{
+		float val = Noise::inverseLerp(min, max, data[i].vertexPoints.y / m_amp);
+		data[i].vertexColor = glm::vec3(val);
 	}
 }
 
