@@ -28,6 +28,21 @@ void engin::Texture::bindTextureUnit(uint32_t unit)
 	glBindTextureUnit(unit, m_textureId);
 }
 
+void engin::Texture::unBindTextureUnit(uint32_t unit)
+{
+	glBindTextureUnit(unit, 0);
+}
+
+void engin::Texture::bindTexture()
+{
+	glBindTexture(GL_TEXTURE_2D, m_textureId);
+}
+
+void engin::Texture::unBindTexture()
+{
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 uint32_t engin::Texture::getTexture(const std::string& texture)
 {
 	auto iterator = m_processedTexture.find(texture);

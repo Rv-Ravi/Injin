@@ -148,7 +148,7 @@ namespace engin {
 									else
 										m_texMaterial.m_diffuse = new Texture(data, id);
 								}
-								else
+								else if(!m_texMaterial.m_diffuse)
 								{
 									uint32_t id = Texture::getTexture(data);
 									if (id == 0)
@@ -187,7 +187,7 @@ namespace engin {
 									else
 										m_texMaterial.m_specular = new Texture(data, id);
 								}
-								else
+								else if (!m_texMaterial.m_specular)
 								{
 									uint32_t id = Texture::getTexture(data);
 									if (id == 0)

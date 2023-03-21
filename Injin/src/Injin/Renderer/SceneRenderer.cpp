@@ -78,8 +78,8 @@ void engin::SceneRenderer::render(SceneGraph* scene)
 		}
 
 	}
+	Texture::unBindTexture();
 	shader::unbindProgram();
-	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void engin::SceneRenderer::createProgram()
@@ -107,15 +107,16 @@ void engin::SceneRenderer::processEntt(ShaderProgram& prog, engin::Yentt& entt)
 	if (material && material->isTexture)
 	{
 		if (material->m_texMaterial.m_diffuse)
-		{
 			material->m_texMaterial.m_diffuse->bindTextureUnit(0);
-			prog.setUniValue("diffTexUnit", 0);
-		}
+		else
+			material->m_texMaterial.m_diffuse->unBindTextureUnit(0);
+
 		if (material->m_texMaterial.m_specular)
-		{
 			material->m_texMaterial.m_specular->bindTextureUnit(1);
-			prog.setUniValue("specTexUnit", 1);
-		}
+		else
+			material->m_texMaterial.m_specular->unBindTextureUnit(1);
+		prog.setUniValue("diffTexUnit", 0);
+		prog.setUniValue("specTexUnit", 1);
 	}
 	else {
 		shader::setUniformBufferData("objMaterial", 0,
@@ -130,6 +131,7 @@ void engin::SceneRenderer::processEntt(ShaderProgram& prog, engin::Yentt& entt)
 		, &material->m_shininess);
 	shader::setUniformBufferData("objMaterial", sizeof(glm::vec4) * 3, sizeof(bool)
 		, &material->isTexture);
+	
 	entt.getComponent<MeshComponent>()->m_meshData->drawMesh();
 
 	

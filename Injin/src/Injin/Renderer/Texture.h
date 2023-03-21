@@ -29,6 +29,10 @@ namespace engin
 		}
 
 		void bindTextureUnit(uint32_t unit);
+		void unBindTextureUnit(uint32_t unit);
+
+		void bindTexture();
+		static void unBindTexture();
 
 		static uint32_t getTexture(const std::string& texture);
 
