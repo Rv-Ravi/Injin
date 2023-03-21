@@ -60,7 +60,8 @@ namespace engin
 		int32_t m_octave,m_width = 100,m_height = 100;
 		float m_amp, m_lucnarity, m_persistance,m_scale, m_xOffset, m_yOffset;
 		Meshes m_terrainMesh;
-		float fallOffs = 0, fallOffe = 1.f;
+		float fallOffe = -1.f;
+		bool isFallOff = false;
 		
 	private:
 		bool isSettedUp = false;

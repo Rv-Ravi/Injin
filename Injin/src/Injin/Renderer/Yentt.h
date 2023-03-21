@@ -293,6 +293,7 @@ namespace engin {
 		void ImGuiWindow()
 		{
 			ImGui::Text("Terrain Component: \n");
+			ImGui::Checkbox("Flat Edges", &m_terrain->isFallOff);
 			ImGui::DragFloat("Amplitude", &m_terrain->m_amp, 0.01f, 0.f, 200.f, "%.2f");
 			ImGui::DragFloat("Persistance", &m_terrain->m_persistance, 0.001f, 0.0001f, 1.f, "%.4f");
 			ImGui::DragFloat("Lucnarity", &m_terrain->m_lucnarity, 0.01f, 0.f, 10.f, "%.2f");
@@ -302,11 +303,9 @@ namespace engin {
 			ImGui::DragInt("Octave", &m_terrain->m_octave, 1, 0, 5);
 			ImGui::DragFloat("X-Offset", &m_terrain->m_xOffset, 0.1f, 0.f, 50.f);
 			ImGui::DragFloat("Y-Offset", &m_terrain->m_yOffset, 0.1f, 0.f, 50.f);
-			ImGui::DragInt("Plane width", &m_terrain->m_width, 1, 2, 200);
-			ImGui::DragInt("Plane Height", &m_terrain->m_height, 1, 2, 200);
-
-			ImGui::DragFloat("Fall off start", &m_terrain->fallOffs, 0.001f, 0.f, 1.f, "%.4f");
-			ImGui::DragFloat("Fall off end", &m_terrain->fallOffe, 0.001f, 0.f, 1.f, "%.4f");
+			ImGui::DragInt("Plane width", &m_terrain->m_width, 1, 2, 200.f);
+			ImGui::DragInt("Plane Height", &m_terrain->m_height, 1, 2, 200.f);
+			ImGui::DragFloat("Fall off Y", &m_terrain->fallOffe, 0.001f, -1.f, 1.f, "%.4f");
 
 			if (ImGui::Button("Generate"))
 			{

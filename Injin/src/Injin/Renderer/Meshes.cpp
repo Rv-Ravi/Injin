@@ -292,7 +292,7 @@ void engin::TerrainGeneration::generateNoiseMesh(std::vector<vertexData>& data, 
 			vData.vertexPoints.y = 0;
 			float tmpFreq = 1,noiseVal = 0, tmpAmp = m_amp;
 
-			float fValue = getFallOffValue(i, j);
+			float fValue = isFallOff ? getFallOffValue(i, j) : 1.f;
 			for (uint16_t oct = m_octave; oct > 0; oct--)
 			{
 				noiseVal = noise.noise2d({ (float)j / m_scale * tmpFreq + m_xOffset
@@ -304,6 +304,9 @@ void engin::TerrainGeneration::generateNoiseMesh(std::vector<vertexData>& data, 
 			}
 			if (noiseVal > max) max = noiseVal;
 			if (noiseVal < min) min = noiseVal;
+			
+			if (y_pos < fallOffe) y_pos = fallOffe;
+			vData.vertexPoints.y = y_pos * m_amp;
 			vData.vertexPoints.x = j - (m_width / 2.f); vData.vertexPoints.z = i - (m_height / 2.f);
 			vData.textureCoord.x = (1.f / m_width) * j; vData.textureCoord.y = 1.f - (1.f / m_height) * i;
 
