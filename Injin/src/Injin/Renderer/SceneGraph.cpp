@@ -11,10 +11,8 @@ engin::SceneGraph::SceneGraph()
 	m_sceneRenderer(std::make_unique<engin::SceneRenderer>())
 {
 	processMesh();
+	addTerrain();
 	addSquareEntt();
-	addSquareEntt();
-	addCubeEntt();
-	addCubeEntt();
 	addDirectionalLit();
 
 
