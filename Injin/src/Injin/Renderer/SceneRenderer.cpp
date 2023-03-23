@@ -107,16 +107,28 @@ void engin::SceneRenderer::processEntt(ShaderProgram& prog, engin::Yentt& entt)
 	if (material && material->isTexture)
 	{
 		if (material->m_texMaterial.m_diffuse)
+		{
 			material->m_texMaterial.m_diffuse->bindTextureUnit(0);
+			prog.setUniValue("diffTexUnit", 0);
+		}	
 		else
+		{
 			material->m_texMaterial.m_diffuse->unBindTextureUnit(0);
-
+			prog.setUniValue("diffTexUnit", 0);
+		}
 		if (material->m_texMaterial.m_specular)
+		{
 			material->m_texMaterial.m_specular->bindTextureUnit(1);
+			prog.setUniValue("specTexUnit", 1);
+		}
+			
 		else
+		{
 			material->m_texMaterial.m_specular->unBindTextureUnit(1);
-		prog.setUniValue("diffTexUnit", 0);
-		prog.setUniValue("specTexUnit", 1);
+			prog.setUniValue("specTexUnit", 0);
+			
+		}
+		
 	}
 	else {
 		shader::setUniformBufferData("objMaterial", 0,
