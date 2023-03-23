@@ -1,8 +1,6 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#pragma warning(disable : 4251)
-
 #include "coreInit.h"
 #include "../glContext/graphicsInit.h"
 #include "../Renderer/Camera.h"

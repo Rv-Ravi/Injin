@@ -1,6 +1,6 @@
 #ifndef NOISE_H
 #define NOISE_H
-
+#pragma warning(disable : 4244)
 #include <random>
 #include <time.h>
 #include <math.h>

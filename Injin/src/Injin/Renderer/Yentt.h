@@ -292,22 +292,18 @@ namespace engin {
 		}
 		void ImGuiWindow()
 		{
-			uint16_t m_octave, m_xOffset, m_yOffset, m_width = 5, m_height = 5;
-			float m_freq, m_amp, m_lucnarity, m_persistance, m_scale;
 			ImGui::Text("Terrain Component: \n");
-
-
 			ImGui::DragFloat("Amplitude", &m_terrain->m_amp, 0.01f, 0.f, 200.f, "%.2f");
 			ImGui::DragFloat("Persistance", &m_terrain->m_persistance, 0.001f, 0.0001f, 1.f, "%.4f");
 			ImGui::DragFloat("Lucnarity", &m_terrain->m_lucnarity, 0.01f, 0.f, 10.f, "%.2f");
 
 			ImGui::DragFloat("Scale", &m_terrain->m_scale, 0.01f, 1.f, 100.f, "%.4f");
 
-			ImGui::DragInt("Octave", &m_terrain->m_octave, 1, 0, 5.f);
+			ImGui::DragInt("Octave", &m_terrain->m_octave, 1, 0, 5);
 			ImGui::DragFloat("X-Offset", &m_terrain->m_xOffset, 0.1f, 0.f, 50.f);
 			ImGui::DragFloat("Y-Offset", &m_terrain->m_yOffset, 0.1f, 0.f, 50.f);
-			ImGui::DragInt("Plane width", &m_terrain->m_width, 1, 2, 200.f);
-			ImGui::DragInt("Plane Height", &m_terrain->m_height, 1, 2, 200.f);
+			ImGui::DragInt("Plane width", &m_terrain->m_width, 1, 2, 200);
+			ImGui::DragInt("Plane Height", &m_terrain->m_height, 1, 2, 200);
 
 			ImGui::DragFloat("Fall off start", &m_terrain->fallOffs, 0.001f, 0.f, 1.f, "%.4f");
 			ImGui::DragFloat("Fall off end", &m_terrain->fallOffe, 0.001f, 0.f, 1.f, "%.4f");
@@ -322,11 +318,15 @@ namespace engin {
 
 	struct RenderComponent : public Component
 	{
-		bool m_render = true,m_depth = true, m_stencil = false,m_dMask = true,m_fCull = false;
+		bool m_render = true,m_depth = true, m_stencil = false,m_dMask = true,m_fCull = false,m_blend = false;
 
 		uint16_t m_dFunc = GL_LESS, m_sFunc = GL_ALWAYS,
-			m_sOpFace = GL_FRONT,m_sFuncFace = GL_FRONT_AND_BACK,m_sMaskFace = GL_FRONT_AND_BACK,
-			m_cullFace = GL_BACK,m_frontFace = GL_CCW;
+			m_sOpFace = GL_FRONT, m_sFuncFace = GL_FRONT_AND_BACK, m_sMaskFace = GL_FRONT_AND_BACK,
+			m_cullFace = GL_BACK, m_frontFace = GL_CCW,
+			m_srcColFac = GL_SRC_ALPHA,
+			m_dstColFac = GL_ONE_MINUS_SRC_ALPHA,
+			m_colFunc = GL_FUNC_ADD;
+		glm::vec4 m_constCol = glm::vec4(1);
 		int32_t m_sMask = 0,m_sRefVal = 1,m_sRefMask = 0xFF;
 
 
@@ -360,16 +360,20 @@ namespace engin {
 			ImGui::Checkbox("Stencil", &m_stencil);
 			ImGui::SameLine(0);
 			ImGui::Checkbox("Face Cull", &m_fCull);
-			ImGui::Text("\n\n");
+			ImGui::SameLine(0);
+			ImGui::Checkbox("Blending", &m_blend);
+			
 			if (m_depth)
 			{
+				ImGui::Text("\n");
 				ImGui::Text("Depth Functions: \n");
 				ImGui::Checkbox("Mask Value\n\n", &m_dMask);
 				funcName("Function Depth", funName, m_dFunc);
 			}
-			ImGui::Text("\n\n");
+			
 			if (m_stencil)
 			{
+				ImGui::Text("\n");
 				ImGui::Text("Stencil Functions: \n");
 				ImGui::DragInt("Mask value", &m_sMask, 1.f, 0, 255);
 				ImGui::DragInt("Reference value", &m_sRefVal, 1.f, 0, 255);
@@ -380,9 +384,10 @@ namespace engin {
 				faceStencil("Operation Face Stencil", faceName, m_sOpFace);
 				faceStencil("Function Face Stencil", faceName, m_sFuncFace);
 			}
-			ImGui::Text("\n\n");
+			
 			if (m_fCull)
 			{
+				ImGui::Text("\n");
 				std::array<std::string, 2> fFace = {
 					"Clockwise",
 					"Counter Clockwise"
@@ -417,11 +422,78 @@ namespace engin {
 					ImGui::EndCombo();
 				}
 			}
+			if (m_blend)
+			{
+				ImGui::Text("\n");
+				ImGui::Text("Blending Functions: \n");
+				std::array<std::string, 19> facName = {
+					"Zero","One",
+					"Source Color","One Minus Source Color","Source Alpha","One Minus Source Alpha",
+					"Destnation Alpha","One Minus Destination Alpha","Destination Color","One Minus Destination Color","Source Alpha Saturate",
+					"Constant Color","One Minus Constant Color","Constant Alpha","One Minus Constant Alpha",
+					"Source 1 Alpha",
+					"Source 1 Color","One Minus Source 1 Color","One Minus Source 1 Alpha"
+				};
+				std::array<std::string, 6> bFuncName = {
+					"Addition",
+					"Minimum",
+					"Maximum",
+					"Blend",
+					"Subtract",
+					"Reverse Subtract"
+				};
+				factorSelection("Source Color Factor", facName, m_srcColFac);
+				factorSelection("Destination Color Factor", facName, m_dstColFac);
+				ImGui::ColorEdit4("Constant Color", &m_constCol.x);
+				bFuncSelection("Color Function", bFuncName, m_colFunc);
+			}
 		}
 
 		private:
+			void factorSelection(const char* name, std::array<std::string, 19>& fName, uint16_t& fac)
+			{
+				std::array<uint16_t, 19> arr = {
+					GL_ZERO,GL_ONE,GL_SRC_COLOR,GL_ONE_MINUS_SRC_COLOR,GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA,GL_DST_ALPHA,GL_ONE_MINUS_DST_ALPHA,
+			GL_DST_COLOR,GL_ONE_MINUS_DST_COLOR,GL_SRC_ALPHA_SATURATE,GL_CONSTANT_COLOR,GL_ONE_MINUS_CONSTANT_COLOR,GL_CONSTANT_ALPHA,
+			GL_ONE_MINUS_CONSTANT_ALPHA,GL_SRC1_ALPHA,GL_SRC1_COLOR,GL_ONE_MINUS_SRC1_COLOR,GL_ONE_MINUS_SRC1_ALPHA
+				};
+				auto tmpFac = std::find(arr.begin(), arr.end(), fac) - arr.begin();
+				const char* mainName = fName[(uint16_t)tmpFac].c_str();
+				if (ImGui::BeginCombo(name, mainName))
+				{
+					for (uint16_t i = 0; i < 19; i++)
+					{
+						bool is_selected = (fName[(uint16_t)tmpFac] == fName[i]);
+						if (ImGui::Selectable(fName[i].c_str(), is_selected))
+						{
+							fac = arr[i];
+							if (is_selected) ImGui::SetItemDefaultFocus();
+						}
+					}
+
+					ImGui::EndCombo();
+				}
+			}
+			void bFuncSelection(const char* name, std::array<std::string, 6>& fName, uint16_t& func)
+			{
+				if (ImGui::BeginCombo(name, fName[func - 0x8006].c_str()))
+				{
+					for (uint16_t i = 0; i < 6; i++)
+					{
+						bool is_selected = (fName[func - 0x8006] == fName[i]);
+						if (ImGui::Selectable(fName[i].c_str(), is_selected))
+						{
+							if (i != 3) func = 0x8006 + i;
+							if (is_selected) ImGui::SetItemDefaultFocus();
+						}
+					}
+
+					ImGui::EndCombo();
+				}
+			}
 			void faceStencil(const char* name, std::array<std::string, 5>& fName, uint16_t& face)
 			{
+				
 				if (ImGui::BeginCombo(name, fName[face - 0x0404].c_str()))
 				{
 					for (uint16_t i = 0; i < 5; i++)

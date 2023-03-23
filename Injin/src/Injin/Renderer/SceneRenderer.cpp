@@ -247,6 +247,16 @@ void engin::SceneRenderer::setFCull(RenderComponent* component)
 
 void engin::SceneRenderer::setBlend(RenderComponent* component)
 {
+	if (component->m_blend)
+	{
+		glEnable(GL_BLEND);
+		glBlendColor(component->m_constCol.x, component->m_constCol.y, component->m_constCol.z, component->m_constCol.a);
+		glBlendEquationSeparate(component->m_colFunc, component->m_colFunc);
+		glBlendFuncSeparate(component->m_srcColFac, component->m_dstColFac, component->m_srcColFac, component->m_dstColFac);
+	}
+	else {
+		glDisable(GL_BLEND);
+	}
 }
 
 
