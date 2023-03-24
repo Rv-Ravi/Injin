@@ -57,6 +57,8 @@ void engin::SceneRenderer::render(SceneGraph* scene)
 			processLight(entt);
 		}
 	}
+	scene->m_sceneFrame->bindFrameBuffer();
+	FrameBuffers::clrBuffer({ 0.2f,0.2f,0.5f,1.f });
 	for (auto& entt : scene->m_enttList)
 	{
 		std::string& tmpTag = entt.getComponent<TagComponent>()->m_tagName;
@@ -70,14 +72,18 @@ void engin::SceneRenderer::render(SceneGraph* scene)
 				setStencil(flg);
 				setFCull(flg);
 				setBlend(flg);
-
-
 				processEntt(m_shaderProgram[2],entt);	
 			}
 
 		}
 
 	}
+
+	FrameBuffers::unbindFrameBuffer();
+	m_shaderProgram[3].bindProgram();
+	m_shaderProgram[3].setUniValue("texUnit", 0);
+	scene->m_sceneFrame->renderFrameBuffer(scene->m_meshList["Square"],0);
+
 	Texture::unBindTexture();
 	shader::unbindProgram();
 }
@@ -90,6 +96,7 @@ void engin::SceneRenderer::createProgram()
 	m_shaderProgram.emplace_back(currntPath.string() + std::string("\\assets\\Shaders\\simpleObj.glsl"));
 	m_shaderProgram.emplace_back(currntPath.string() + std::string("\\assets\\Shaders\\simpLightShader.glsl"));
 	m_shaderProgram.emplace_back(currntPath.string() + std::string("\\assets\\Shaders\\multiLitPhong.glsl"));
+	m_shaderProgram.emplace_back(currntPath.string() + std::string("\\assets\\Shaders\\framBuffShader.glsl"));
 
 }
 

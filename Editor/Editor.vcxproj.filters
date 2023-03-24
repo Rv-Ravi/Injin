@@ -21,5 +21,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\Shaders\multiLitPhong.glsl" />
+    <None Include="assets\Shaders\framBuffShader.glsl" />
   </ItemGroup>
 </Project>

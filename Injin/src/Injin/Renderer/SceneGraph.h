@@ -6,11 +6,13 @@
 #include "../Renderer/ShaderProgram.h"
 #include <filesystem>
 #include <unordered_map>
-
+#include "FrameBuffers.h"
 namespace engin {
 
 	class SceneGraph
 	{
+	private:
+		engin::FrameBuffers*m_sceneFrame = nullptr;
 	private:
 		friend class SceneRenderer;
 
@@ -59,7 +61,7 @@ namespace engin {
 	{
 	private:
 		std::vector<ShaderProgram> m_shaderProgram;
-
+		
 	public:
 		SceneRenderer();
 		~SceneRenderer();

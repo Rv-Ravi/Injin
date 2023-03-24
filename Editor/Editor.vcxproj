@@ -97,6 +97,7 @@
     <ClCompile Include="src\EditorApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\Shaders\framBuffShader.glsl" />
     <None Include="assets\Shaders\multiLitPhong.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

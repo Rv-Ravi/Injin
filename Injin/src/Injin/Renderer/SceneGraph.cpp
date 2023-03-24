@@ -10,6 +10,10 @@ engin::SceneGraph::SceneGraph()
 	:m_scenePerspectiveCamera(std::make_unique<engin::PerspectiveCamera>(glm::vec3(0.f, 0.f, 0.f))),
 	m_sceneRenderer(std::make_unique<engin::SceneRenderer>())
 {
+
+	auto mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	m_sceneFrame = new engin::FrameBuffers(mode->width, mode->height, 1);
+
 	processMesh();
 	addTerrain();
 	addSquareEntt();
@@ -20,7 +24,7 @@ engin::SceneGraph::SceneGraph()
 
 engin::SceneGraph::~SceneGraph()
 {
-	
+	delete m_sceneFrame;
 }
 void engin::SceneGraph::addEntt()
 {

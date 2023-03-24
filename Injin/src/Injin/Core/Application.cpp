@@ -48,8 +48,5 @@ void engin::Application::imGuiUpdates()
 	m_guiLayer->setNewFrame();
 
 	m_sceneGraph->ImGuiWindows();
-	ImGui::ShowDemoWindow();
-	
-
 	m_guiLayer->renderData();
 }
