@@ -17,7 +17,7 @@ namespace engin
 		void setNewFrame();
 
 		void renderData();
-
+		void enableDockSpace();
 		void imGuiExit();
 	};
 

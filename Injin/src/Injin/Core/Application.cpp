@@ -46,7 +46,7 @@ void engin::Application::onUpdate()
 void engin::Application::imGuiUpdates()
 {
 	m_guiLayer->setNewFrame();
-
+	m_guiLayer->enableDockSpace();
 	m_sceneGraph->ImGuiWindows();
 	m_guiLayer->renderData();
 }
