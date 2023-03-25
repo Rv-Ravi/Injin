@@ -42,6 +42,7 @@ namespace engin
 
 		glfwMakeContextCurrent(m_window);
 		winProp.m_isSync ? glfwSwapInterval(1) : glfwSwapInterval(0);
+		glfwSetWindowSizeLimits(m_window, 720, 480, 4000, 4000);
 
 	}
 	void WindowGL::setCallbacks()

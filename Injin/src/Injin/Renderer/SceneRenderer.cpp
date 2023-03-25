@@ -80,10 +80,6 @@ void engin::SceneRenderer::render(SceneGraph* scene)
 	}
 
 	FrameBuffers::unbindFrameBuffer();
-	m_shaderProgram[3].bindProgram();
-	m_shaderProgram[3].setUniValue("texUnit", 0);
-	scene->m_sceneFrame->renderFrameBuffer(scene->m_meshList["Square"],0);
-
 	Texture::unBindTexture();
 	shader::unbindProgram();
 }

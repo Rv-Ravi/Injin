@@ -10,7 +10,9 @@ namespace engin
 	private:
 		uint32_t m_fbo = 0 , m_depAndStenAtt = 0;
 		uint32_t* m_colAtt;
-		uint32_t m_nColAtt = 1,m_width,m_height;
+		uint32_t m_nColAtt = 1;
+	public:
+		uint32_t m_width, m_height;
 
 	public:
 		FrameBuffers(uint32_t width = 1920 ,uint32_t height = 1080, uint16_t nCol = 1,bool isDepth = true,bool isStencil = true, bool depthStencilAsTex = true);

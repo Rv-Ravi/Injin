@@ -136,6 +136,8 @@ void engin::SceneGraph::ImGuiWindows()
 	}
 	ImGui::End();
 
+
+
 	ImGui::Begin("Properties");
 
 	if (currentYentt)
@@ -150,6 +152,13 @@ void engin::SceneGraph::ImGuiWindows()
 	}
 
 
+	ImGui::End();
+
+	ImGui::Begin("Editor Panel");
+	ImVec2 panelSize = ImGui::GetContentRegionAvail();
+	ImGui::Image((void*)m_sceneFrame->getColAtt(0),
+		panelSize,
+		ImVec2{ 0,1 }, ImVec2{ 1,0 });
 	ImGui::End();
 
 }
