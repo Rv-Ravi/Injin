@@ -19,7 +19,6 @@ namespace engin {
 		std::vector<engin::Yentt> m_enttList;
 		std::vector<engin::Yentt> m_LightEntt;
 		std::unique_ptr<engin::PerspectiveCamera> m_scenePerspectiveCamera;
-		static std::unordered_map<std::string, Meshes*> m_meshList;
 
 		static engin::Yentt* currentYentt;
 		bool CameraSettings = false;
@@ -47,14 +46,19 @@ namespace engin {
 
 		void ImGuiWindows();
 
-		void deleteMesh();
 
 		void addTerrain();
 
 		void manipulateEntity();
 		void removeEntity();
 	private:
-		static void processMesh();
+
+		void loadModelGui();
+		void loadModel(const std::string& fileName);
+		void modelProcessScene(const aiScene* scene,aiNode* node);
+		void modelProcessMesh(const aiScene* scene, const aiMesh* mesh);
+		void modelProcessMaterial(const aiScene* scene, const aiMesh* mesh,engin::Yentt& entt);
+		bool modelTextureProcess(aiMaterial* meshMaterial, aiTextureType type, engin::Yentt& entt);
 	};
 
 

@@ -16,7 +16,6 @@ engin::Application::Application(winProperties winProp)
 
 engin::Application::~Application()
 {
-	m_sceneGraph->deleteMesh();
 	m_guiLayer->imGuiExit();
 }
 

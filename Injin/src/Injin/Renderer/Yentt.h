@@ -11,6 +11,9 @@
 #include "Meshes.h"
 #include "Texture.h"
 #include <filesystem>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 namespace engin {
 
@@ -95,7 +98,7 @@ namespace engin {
 
 		}
 		~MeshComponent() {
-
+			delete m_meshData;
 		}
 
 		bool ImGuiWindow()

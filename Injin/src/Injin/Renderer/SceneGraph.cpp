@@ -5,7 +5,6 @@ engin::Yentt* engin::SceneGraph::currentYentt = nullptr;
 std::vector<std::string> engin::TagComponent::ms_tagList = { "Object","Light","Camera","Base","Terrain"};
 
 std::vector<engin::Component*>::iterator engin::Yentt::tempComp;
-std::unordered_map<std::string, engin::Meshes*> engin::SceneGraph::m_meshList = {};
 
 engin::SceneGraph::SceneGraph()
 	:m_scenePerspectiveCamera(std::make_unique<engin::PerspectiveCamera>(glm::vec3(0.f, 0.f, 0.f))),
@@ -14,9 +13,6 @@ engin::SceneGraph::SceneGraph()
 
 	auto mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	m_sceneFrame = new engin::FrameBuffers(mode->width, mode->height, 1);
-
-	processMesh();
-
 
 }
 
@@ -33,7 +29,7 @@ void engin::SceneGraph::addSquareEntt()
 {
 	m_enttList.emplace_back("Square-" + std::to_string(m_enttList.size()));
 	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Object");
-	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Square"));
+	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(new engin::Meshes(engin::square,engin::squareIndex,"Square"));
 	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>();
 	m_enttList[m_enttList.size() - 1].addComponent<RenderComponent>();
 	currentYentt = &m_enttList[m_enttList.size() - 1];
@@ -43,7 +39,7 @@ void engin::SceneGraph::addCubeEntt()
 {
 	m_enttList.emplace_back("Cube-" + std::to_string(m_enttList.size()));
 	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Object");
-	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Cube"));
+	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(new engin::Meshes(engin::block, engin::blockIndex, "Cube"));
 	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>();
 	m_enttList[m_enttList.size() - 1].addComponent<RenderComponent>();
 	
@@ -54,7 +50,7 @@ void engin::SceneGraph::addTriangleEntt()
 {
 	m_enttList.emplace_back("Triangle-" +std::to_string(m_enttList.size()));
 	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Object");
-	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Triangle"));
+	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(new engin::Meshes(engin::triangle, {}, "Cube"));
 	m_enttList[m_enttList.size() - 1].addComponent<MaterialComponent>();
 	m_enttList[m_enttList.size() - 1].addComponent<RenderComponent>();
 	currentYentt = &m_enttList[m_enttList.size() - 1];
@@ -102,8 +98,7 @@ void engin::SceneGraph::manipulateEntity()
 		base = false,
 		dirLight = false,
 		pointLight = false,
-		spotLight = false,
-		importModel = false;
+		spotLight = false;
 	if (ImGui::BeginMenu("Add Entity"))
 	{
 
@@ -114,7 +109,6 @@ void engin::SceneGraph::manipulateEntity()
 		ImGui::MenuItem("Directional Light", NULL, &dirLight);
 		ImGui::MenuItem("Point Light", NULL, &pointLight);
 		ImGui::MenuItem("Spot Light", NULL, &spotLight);
-		ImGui::MenuItem("Import Model", NULL, &importModel);
 		ImGui::EndMenu();
 	}
 	if (square)
@@ -131,8 +125,9 @@ void engin::SceneGraph::manipulateEntity()
 		addPointLit();
 	if (spotLight)
 		addSpotLit();
-	if (importModel);
 
+	loadModelGui();
+	ImGui::SameLine();
 	if (ImGui::Button("Remove Entity"))
 		removeEntity();
 }
@@ -220,18 +215,182 @@ void engin::SceneGraph::ImGuiWindows()
 
 }
 
-void engin::SceneGraph::processMesh()
+void engin::SceneGraph::loadModelGui()
 {
-	m_meshList["Square"] = new engin::Meshes(engin::square, engin::squareIndex,"Square");
-	m_meshList["Triangle"] = new engin::Meshes(engin::triangle, {}, "Triangle");
-	m_meshList["Cube"] = new engin::Meshes(engin::block, engin::blockIndex,"Cube");
+	using namespace std::filesystem;
+	static path mainPath = current_path(), currentPath = mainPath / "assets";
+	if (ImGui::Button("Import Model"))
+		ImGui::OpenPopup("File Explorer");
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	static std::string fileName;
+
+	if (ImGui::BeginPopupModal("File Explorer", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		if (ImGui::SmallButton("../"))
+		{
+			if (currentPath.parent_path() != mainPath)
+				currentPath = currentPath.parent_path();
+		}
+		ImGui::Separator();
+
+		for (auto& val : directory_iterator{ currentPath })
+		{
+			auto tmpPath = path(val).filename();
+			if (val.is_directory())
+			{
+				if(ImGui::Button(tmpPath.string().c_str()))
+					currentPath /= tmpPath;
+			}
+			else {
+				if (ImGui::Button(tmpPath.string().c_str()))
+					fileName = tmpPath.string();
+			}
+		}
+
+		ImGui::InputText("File Name", (char*)fileName.c_str(), fileName.size() + 5);
+		if (ImGui::Button("OK", ImVec2(120, 0))) { 
+			fileName = (currentPath / fileName).string();
+			loadModel(fileName);
+			ImGui::CloseCurrentPopup(); 
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+		ImGui::EndPopup();
+	}
+}
+
+void engin::SceneGraph::loadModel(const std::string& fileName)
+{
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile(fileName,
+		aiProcess_Triangulate | aiProcess_FlipUVs
+	);
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+		std::cerr << "Error in loading Model\n";
+	else
+		modelProcessScene(scene, scene->mRootNode);
 
 }
 
-void engin::SceneGraph::deleteMesh() {
-
-	for (auto& mesh : m_meshList)
+void engin::SceneGraph::modelProcessScene(const aiScene* scene,aiNode* node)
+{
+	for (uint16_t i = 0; i < node->mNumMeshes; i++)
 	{
-		mesh.second->deleteBuffers();
+		modelProcessMesh(scene, scene->mMeshes[node->mMeshes[i]]);
 	}
+	for (uint16_t j = 0; j < node->mNumChildren; j++)
+	{
+		modelProcessScene(scene, node->mChildren[j]);
+	}
+}
+
+void engin::SceneGraph::modelProcessMesh(const aiScene* scene, const aiMesh* mesh)
+{
+	std::vector<vertexData> meshData;
+	std::vector<unsigned int> meshIndicies;
+	for (uint32_t i = 0; i < mesh->mNumVertices; i++)
+	{
+		vertexData data;
+		if (mesh->HasPositions())
+			data.vertexPoints = { mesh->mVertices[i].x,
+				mesh->mVertices[i].y,mesh->mVertices[i].z };
+		if (mesh->HasVertexColors(i) && mesh->mColors[0])
+			data.vertexColor = { mesh->mColors[0][i].r,mesh->mColors[0][i].g,mesh->mColors[0][i].b };
+		else
+			data.vertexColor = { 1.f,1.f,1.f };
+
+		if (mesh->mTextureCoords[0])
+			data.textureCoord = { mesh->mTextureCoords[0][i].x,mesh->mTextureCoords[0][i].y };
+		else
+			data.textureCoord = { 0.f,0.f };
+
+		data.vertexNormal = { mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z };
+		meshData.push_back(data);
+
+	}
+	for (unsigned int i = 0; i < mesh->mNumFaces; i++)
+	{
+		aiFace face = mesh->mFaces[i];
+		for (unsigned int j = 0; j < face.mNumIndices; j++)
+			meshIndicies.push_back(face.mIndices[j]);
+	}
+	engin::Meshes* opMesh = new engin::Meshes(meshData, meshIndicies,mesh->mName.C_Str());
+	m_enttList.emplace_back(mesh->mName.C_Str());
+	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(opMesh);
+	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Object");
+	m_enttList[m_enttList.size() - 1].addComponent<RenderComponent>();
+	currentYentt = &m_enttList[m_enttList.size() - 1];
+	modelProcessMaterial(scene, mesh, *currentYentt);
+}
+
+void engin::SceneGraph::modelProcessMaterial(const aiScene* scene, const aiMesh* mesh, engin::Yentt& entt)
+{
+
+	if (mesh->mMaterialIndex >= 0)
+	{
+		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+
+		entt.addComponent<MaterialComponent>();
+		auto mate = entt.getComponent<MaterialComponent>();
+
+		float shinny;
+		aiColor4D content;
+		aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, &content);
+		mate->m_colMaterial.m_ambient = { content.r,content.g,content.b };
+		aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &content);
+		mate->m_colMaterial.m_diffuse = { content.r,content.g,content.b };
+		aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &content);
+		mate->m_colMaterial.m_specular = { content.r,content.g,content.b };
+		material->Get(AI_MATKEY_SHININESS, shinny);
+		if(shinny < 1) mate->m_shininess = 1;
+
+		bool flg1 = modelTextureProcess(material, aiTextureType_DIFFUSE,entt);
+		bool flg2 = modelTextureProcess(material, aiTextureType_SPECULAR,entt);
+		//modelTextureProcess(material, aiTextureType_NORMALS);
+
+		if (flg1 || flg2)
+			mate->isTexture = true;
+	}
+}
+
+bool engin::SceneGraph::modelTextureProcess(aiMaterial* meshMaterial, aiTextureType type,engin::Yentt& entt)
+{
+	uint32_t count = meshMaterial->GetTextureCount(type);
+	auto mate = entt.getComponent<MaterialComponent>();
+	bool flg = false;
+	if (count) {
+		aiString path;
+		meshMaterial->GetTexture(type, 0, &path);
+		uint32_t id = Texture::getTexture(path.C_Str());
+		if (id == 0)
+		{	
+			if(type == 1)
+				mate->m_texMaterial.m_diffuse = new Texture(path.C_Str());
+			else if(type ==2)
+				mate->m_texMaterial.m_specular = new Texture(path.C_Str());
+		}
+		else
+		{
+			if (type == 1)
+				mate->m_texMaterial.m_diffuse = new Texture(path.C_Str(), id);
+			else if (type == 2)
+				mate->m_texMaterial.m_specular = new Texture(path.C_Str(), id);
+		}
+			
+		auto iterator = std::find_if(Texture::m_textureList.begin(), Texture::m_textureList.end(), [&](std::string& str) {
+				if (str == path.C_Str())
+					return true;
+				return false;
+			});
+		if (iterator == Texture::m_textureList.end())
+		{
+			Texture::m_textureList.push_back(path.C_Str());
+		}
+				
+		flg = true;
+	}
+	return flg;
 }
