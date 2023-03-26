@@ -60,34 +60,25 @@ void engin::SceneGraph::addTriangleEntt()
 	currentYentt = &m_enttList[m_enttList.size() - 1];
 }
 
-void engin::SceneGraph::addBase()
-{
-	m_enttList.emplace_back("Base-" + std::to_string(m_enttList.size()));
-	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Base");
-	m_enttList[m_enttList.size() - 1].addComponent<MeshComponent>(m_meshList.at("Square"));
-	auto compo = m_enttList[m_enttList.size() - 1].getComponent<TransformComponent>();
-	compo->m_scale = { 50.f,50.0f,0.f };
-}
-
 void engin::SceneGraph::addDirectionalLit(){
-	m_enttList.emplace_back("Light-" + std::to_string(m_enttList.size()));
-	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Light");
-	m_enttList[m_enttList.size() - 1].addComponent<LightComponent>(engin::LightType::DIRECTIONAL);
-	auto compo = m_enttList[m_enttList.size() - 1].getComponent<TransformComponent>();
+	m_LightEntt.emplace_back("Light-" + std::to_string(m_LightEntt.size()));
+	m_LightEntt[m_LightEntt.size() - 1].addComponent<TagComponent>("Light");
+	m_LightEntt[m_LightEntt.size() - 1].addComponent<LightComponent>(engin::LightType::DIRECTIONAL);
+	auto compo = m_LightEntt[m_LightEntt.size() - 1].getComponent<TransformComponent>();
 	compo->m_rotation = { 270.f,30.f,0.f };
-	currentYentt = &m_enttList[m_enttList.size() - 1];
+	currentYentt = &m_LightEntt[m_LightEntt.size() - 1];
 }
 void engin::SceneGraph::addPointLit(){
-	m_enttList.emplace_back("Light-" + std::to_string(m_enttList.size()));
-	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Light");
-	m_enttList[m_enttList.size() - 1].addComponent<LightComponent>(engin::LightType::POINT);
-	currentYentt = &m_enttList[m_enttList.size() - 1];
+	m_LightEntt.emplace_back("Light-" + std::to_string(m_LightEntt.size()));
+	m_LightEntt[m_LightEntt.size() - 1].addComponent<TagComponent>("Light");
+	m_LightEntt[m_LightEntt.size() - 1].addComponent<LightComponent>(engin::LightType::POINT);
+	currentYentt = &m_LightEntt[m_LightEntt.size() - 1];
 }
 void engin::SceneGraph::addSpotLit() {
-	m_enttList.emplace_back("Light-" + std::to_string(m_enttList.size()));
-	m_enttList[m_enttList.size() - 1].addComponent<TagComponent>("Light");
-	m_enttList[m_enttList.size() - 1].addComponent<LightComponent>(engin::LightType::SPOT);
-	currentYentt = &m_enttList[m_enttList.size() - 1];
+	m_LightEntt.emplace_back("Light-" + std::to_string(m_LightEntt.size()));
+	m_LightEntt[m_LightEntt.size() - 1].addComponent<TagComponent>("Light");
+	m_LightEntt[m_LightEntt.size() - 1].addComponent<LightComponent>(engin::LightType::SPOT);
+	currentYentt = &m_LightEntt[m_LightEntt.size() - 1];
 }
 
 void engin::SceneGraph::addTerrain()
@@ -119,7 +110,6 @@ void engin::SceneGraph::manipulateEntity()
 		ImGui::MenuItem("plane", NULL, &square);
 		ImGui::MenuItem("Cube", NULL, &cube);
 		ImGui::MenuItem("Terrain", NULL, &terrain);
-		ImGui::MenuItem("Base", NULL, &base);
 		ImGui::MenuItem("Triangle", NULL, &triangle);
 		ImGui::MenuItem("Directional Light", NULL, &dirLight);
 		ImGui::MenuItem("Point Light", NULL, &pointLight);
@@ -133,8 +123,6 @@ void engin::SceneGraph::manipulateEntity()
 		addCubeEntt();
 	if (terrain)
 		addTerrain();
-	if (base)
-		addBase();
 	if (triangle)
 		addTriangleEntt();
 	if (dirLight)
@@ -143,10 +131,7 @@ void engin::SceneGraph::manipulateEntity()
 		addPointLit();
 	if (spotLight)
 		addSpotLit();
-	if (importModel)
-	{
-
-	}
+	if (importModel);
 
 	if (ImGui::Button("Remove Entity"))
 		removeEntity();
@@ -156,14 +141,28 @@ void engin::SceneGraph::removeEntity()
 {
 	if (currentYentt)
 	{
-		auto iterator = std::find_if(m_enttList.begin(), m_enttList.end(), [&](engin::Yentt& yentt)
-			{
-				if (&yentt == currentYentt)
+		if (currentYentt->getComponent<TagComponent>()->m_tagName == "Light")
+		{
+			auto iterator = std::find_if(m_LightEntt.begin(), m_LightEntt.end(), [&](engin::Yentt& yentt)
+				{
+					if (&yentt == currentYentt)
 					return true;
-				return false;
-			});
-		if (iterator != m_enttList.end())
-			m_enttList.erase(iterator);
+			return false;
+				});
+			if (iterator != m_LightEntt.end())
+				m_LightEntt.erase(iterator);
+		}
+		else
+		{
+			auto iterator = std::find_if(m_enttList.begin(), m_enttList.end(), [&](engin::Yentt& yentt)
+				{
+					if (&yentt == currentYentt)
+					return true;
+			return false;
+				});
+			if (iterator != m_enttList.end())
+				m_enttList.erase(iterator);
+		}
 	}
 }
 
@@ -188,15 +187,19 @@ void engin::SceneGraph::ImGuiWindows()
 		currentYentt = nullptr;
 		CameraSettings = true;
 	}
+	for (auto& entt : m_LightEntt)
+	{
+		if (ImGui::Button(entt.enttName.c_str()))
+		{
+			CameraSettings = false; currentYentt = &entt;
+		}
+	}
 	for (auto& entt : m_enttList)
 	{
-		if (entt.getComponent<TagComponent>()->m_tagName != "Base")
+		if (ImGui::Button(entt.enttName.c_str()))
 		{
-			if (ImGui::Button(entt.enttName.c_str()))
-			{
-				CameraSettings = false; currentYentt = &entt;
-			}
-		}	
+			CameraSettings = false; currentYentt = &entt;
+		}
 	}
 	ImGui::End();
 

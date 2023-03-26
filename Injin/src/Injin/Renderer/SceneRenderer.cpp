@@ -49,20 +49,9 @@ void engin::SceneRenderer::render(SceneGraph* scene)
 		, &scene->m_scenePerspectiveCamera->getViewProjMat()[0].x);
 	m_shaderProgram[2].bindProgram();
 	m_shaderProgram[2].setUniValuefV("camPos", scene->m_scenePerspectiveCamera->getPos(), 3);
-	uint16_t count = 0;
-	for (auto& entt : scene->m_enttList)
-	{
-		std::string& tmpTag = entt.getComponent<TagComponent>()->m_tagName;
-		if (tmpTag == "Light")
-		{
-			processLight(entt);
-			count++;
-		}
-	}
-	if (count <= 0)
-	{
-		shader::unSetUniformData("Light", 0);
-	}
+	
+	processLight(scene);
+
 	scene->m_sceneFrame->bindFrameBuffer();
 	FrameBuffers::clrBuffer({ 0.2f,0.2f,0.5f,1.f });
 	for (auto& entt : scene->m_enttList)
@@ -164,31 +153,38 @@ void engin::SceneRenderer::processEntt(ShaderProgram& prog, engin::Yentt& entt)
 }
 
 
-void engin::SceneRenderer::processLight(engin::Yentt& entt)
+void engin::SceneRenderer::processLight(SceneGraph* scene)
 {
 	typedef ShaderProgram shader;
-	auto tComp = entt.getComponent<TransformComponent>();
-	auto lComp = entt.getComponent<LightComponent>();
+	for (auto& entt : scene->m_LightEntt)
+	{
+		auto tComp = entt.getComponent<TransformComponent>();
+		auto lComp = entt.getComponent<LightComponent>();
 
-	glm::vec3 litDir = lComp->lightDirection(tComp->m_rotation);
-	int32_t type = (int32_t)lComp->m_litTyp;
-	glm::vec3 litColor = lComp->m_litColor * lComp->m_intensity;
+		glm::vec3 litDir = lComp->lightDirection(tComp->m_rotation);
+		int32_t type = (int32_t)lComp->m_litTyp;
+		glm::vec3 litColor = lComp->m_litColor * lComp->m_intensity;
 
-	shader::setUniformBufferData("Light", 0,
-		sizeof(glm::vec3), &litColor.x);
-	shader::setUniformBufferData("Light", sizeof(glm::vec4),
-		sizeof(glm::vec3), &tComp->m_position.x);
-	shader::setUniformBufferData("Light", sizeof(glm::vec4) * 2,
-		sizeof(glm::vec3), &litDir.x);
+		shader::setUniformBufferData("Light", 0,
+			sizeof(glm::vec3), &litColor.x);
+		shader::setUniformBufferData("Light", sizeof(glm::vec4),
+			sizeof(glm::vec3), &tComp->m_position.x);
+		shader::setUniformBufferData("Light", sizeof(glm::vec4) * 2,
+			sizeof(glm::vec3), &litDir.x);
 
-	shader::setUniformBufferData("Light", sizeof(glm::vec3),
-		sizeof(float), &lComp->m_radius);
-	shader::setUniformBufferData("Light", sizeof(glm::vec4) + sizeof(glm::vec3),
-		sizeof(float), &lComp->m_innerAngle);
-	shader::setUniformBufferData("Light", sizeof(glm::vec4) * 2 + sizeof(glm::vec3),
-		sizeof(float), &lComp->m_outerAngle);
-	shader::setUniformBufferData("Light", sizeof(glm::vec4) * 3,
-		sizeof(int), &type);
+		shader::setUniformBufferData("Light", sizeof(glm::vec3),
+			sizeof(float), &lComp->m_radius);
+		shader::setUniformBufferData("Light", sizeof(glm::vec4) + sizeof(glm::vec3),
+			sizeof(float), &lComp->m_innerAngle);
+		shader::setUniformBufferData("Light", sizeof(glm::vec4) * 2 + sizeof(glm::vec3),
+			sizeof(float), &lComp->m_outerAngle);
+		shader::setUniformBufferData("Light", sizeof(glm::vec4) * 3,
+			sizeof(int), &type);
+	}
+	if (scene->m_LightEntt.size() <= 0)
+	{
+		shader::unSetUniformData("Light", 0);
+	}
 }
 
 void engin::SceneRenderer::setDepth(RenderComponent* component)

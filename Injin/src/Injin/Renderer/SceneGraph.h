@@ -17,6 +17,7 @@ namespace engin {
 		friend class SceneRenderer;
 
 		std::vector<engin::Yentt> m_enttList;
+		std::vector<engin::Yentt> m_LightEntt;
 		std::unique_ptr<engin::PerspectiveCamera> m_scenePerspectiveCamera;
 		static std::unordered_map<std::string, Meshes*> m_meshList;
 
@@ -40,8 +41,6 @@ namespace engin {
 		void addDirectionalLit();
 		void addPointLit();
 		void addSpotLit();
-
-		void addBase();
 
 		void sceneUpdate(engin::WindowGL& window,float dtime);
 		void drawScene(engin::WindowGL& window,float dtime);
@@ -74,7 +73,7 @@ namespace engin {
 	private:
 		void createProgram();
 		void processEntt(ShaderProgram& prog,engin::Yentt& entt);
-		void processLight(engin::Yentt& entt);
+		void processLight(SceneGraph* scene);
 
 		static void setDepth(RenderComponent* component);
 		static void setStencil(RenderComponent* component);
