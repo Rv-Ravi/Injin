@@ -1,4 +1,5 @@
 #include "SceneGraph.h"
+#include <algorithm>
 
 engin::Yentt* engin::SceneGraph::currentYentt = nullptr;
 std::vector<std::string> engin::TagComponent::ms_tagList = { "Object","Light","Camera","Base","Terrain"};
@@ -15,9 +16,6 @@ engin::SceneGraph::SceneGraph()
 	m_sceneFrame = new engin::FrameBuffers(mode->width, mode->height, 1);
 
 	processMesh();
-	addTerrain();
-	addSquareEntt();
-	addDirectionalLit();
 
 
 }
@@ -104,6 +102,71 @@ void engin::SceneGraph::addTerrain()
 	currentYentt = &m_enttList[m_enttList.size() - 1];
 }
 
+void engin::SceneGraph::manipulateEntity()
+{
+	bool square = false,
+		cube = false,
+		terrain = false,
+		triangle = false,
+		base = false,
+		dirLight = false,
+		pointLight = false,
+		spotLight = false,
+		importModel = false;
+	if (ImGui::BeginMenu("Add Entity"))
+	{
+
+		ImGui::MenuItem("plane", NULL, &square);
+		ImGui::MenuItem("Cube", NULL, &cube);
+		ImGui::MenuItem("Terrain", NULL, &terrain);
+		ImGui::MenuItem("Base", NULL, &base);
+		ImGui::MenuItem("Triangle", NULL, &triangle);
+		ImGui::MenuItem("Directional Light", NULL, &dirLight);
+		ImGui::MenuItem("Point Light", NULL, &pointLight);
+		ImGui::MenuItem("Spot Light", NULL, &spotLight);
+		ImGui::MenuItem("Import Model", NULL, &importModel);
+		ImGui::EndMenu();
+	}
+	if (square)
+		addSquareEntt();
+	if (cube)
+		addCubeEntt();
+	if (terrain)
+		addTerrain();
+	if (base)
+		addBase();
+	if (triangle)
+		addTriangleEntt();
+	if (dirLight)
+		addDirectionalLit();
+	if (pointLight)
+		addPointLit();
+	if (spotLight)
+		addSpotLit();
+	if (importModel)
+	{
+
+	}
+
+	if (ImGui::Button("Remove Entity"))
+		removeEntity();
+}
+
+void engin::SceneGraph::removeEntity()
+{
+	if (currentYentt)
+	{
+		auto iterator = std::find_if(m_enttList.begin(), m_enttList.end(), [&](engin::Yentt& yentt)
+			{
+				if (&yentt == currentYentt)
+					return true;
+				return false;
+			});
+		if (iterator != m_enttList.end())
+			m_enttList.erase(iterator);
+	}
+}
+
 void engin::SceneGraph::sceneUpdate(engin::WindowGL& window, float dtime)
 {
 	m_scenePerspectiveCamera->mvCam(window, dtime);
@@ -118,6 +181,7 @@ void engin::SceneGraph::drawScene(engin::WindowGL& window, float dtime)
 void engin::SceneGraph::ImGuiWindows()
 {
 	ImGui::Begin("Scene Graph");
+	manipulateEntity();
 	ImGui::Text("Entities : \n");
 	if (ImGui::Button("Main Camera"))
 	{

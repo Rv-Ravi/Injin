@@ -52,6 +52,8 @@ namespace engin {
 
 		void addTerrain();
 
+		void manipulateEntity();
+		void removeEntity();
 	private:
 		static void processMesh();
 	};
