@@ -204,21 +204,11 @@ void engin::SceneGraph::ImGuiWindows()
 	ImGui::End();
 
 
-
 	ImGui::Begin("Properties");
-
 	if (currentYentt)
-	{
-		for (auto& component : currentYentt->m_yenttComponents)
-		{
-			component->ImGuiWindow();
-		}
-	}
-	else if(CameraSettings){
+		currentYentt->compManipulation();
+	else if(CameraSettings)
 		m_scenePerspectiveCamera->imGuiWindows();
-	}
-
-
 	ImGui::End();
 
 	ImGui::Begin("Editor Panel");

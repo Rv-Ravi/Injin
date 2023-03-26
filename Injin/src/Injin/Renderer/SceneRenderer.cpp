@@ -56,20 +56,14 @@ void engin::SceneRenderer::render(SceneGraph* scene)
 	FrameBuffers::clrBuffer({ 0.2f,0.2f,0.5f,1.f });
 	for (auto& entt : scene->m_enttList)
 	{
-		std::string& tmpTag = entt.getComponent<TagComponent>()->m_tagName;
-		if (tmpTag == "Object" || tmpTag == "Terrain")
-		{
-			auto flg = entt.getComponent<RenderComponent>();
-			if (flg && flg->m_render)
-			{	
-
-				setDepth(flg);
-				setStencil(flg);
-				setFCull(flg);
-				setBlend(flg);
-				processEntt(m_shaderProgram[2],entt);	
-			}
-
+		auto flg = entt.getComponent<RenderComponent>();
+		if (flg && flg->m_render)
+		{	
+			setDepth(flg);
+			setStencil(flg);
+			setFCull(flg);
+			setBlend(flg);
+			processEntt(m_shaderProgram[2],entt);	
 		}
 
 	}
@@ -130,21 +124,25 @@ void engin::SceneRenderer::processEntt(ShaderProgram& prog, engin::Yentt& entt)
 			prog.setUniValue("specTexUnit", 0);
 			
 		}
+		shader::setUniformBufferData("objMaterial", sizeof(glm::vec3) + sizeof(glm::vec4) * 2, sizeof(float)
+			, &material->m_shininess);
+		shader::setUniformBufferData("objMaterial", sizeof(glm::vec4) * 3, sizeof(bool)
+			, &material->isTexture);
 		
 	}
-	else {
+	else if(material){
 		shader::setUniformBufferData("objMaterial", 0,
 			sizeof(glm::vec3), &material->m_colMaterial.m_ambient.x);
 		shader::setUniformBufferData("objMaterial", sizeof(glm::vec4),
 			sizeof(glm::vec3), &material->m_colMaterial.m_diffuse.x);
 		shader::setUniformBufferData("objMaterial", sizeof(glm::vec4) * 2,
 			sizeof(glm::vec3), &material->m_colMaterial.m_specular.x);
+		shader::setUniformBufferData("objMaterial", sizeof(glm::vec3) + sizeof(glm::vec4) * 2, sizeof(float)
+			, &material->m_shininess);
+		shader::setUniformBufferData("objMaterial", sizeof(glm::vec4) * 3, sizeof(bool)
+			, &material->isTexture);
 
 	}
-	shader::setUniformBufferData("objMaterial", sizeof(glm::vec3) + sizeof(glm::vec4) * 2, sizeof(float)
-		, &material->m_shininess);
-	shader::setUniformBufferData("objMaterial", sizeof(glm::vec4) * 3, sizeof(bool)
-		, &material->isTexture);
 	
 	auto mesh = entt.getComponent<MeshComponent>();
 	if(mesh) mesh->m_meshData->drawMesh();
