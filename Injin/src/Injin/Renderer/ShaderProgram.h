@@ -4,6 +4,7 @@
 #include "../glContext/graphicsInit.h"
 #include <string>
 #include <unordered_map>
+#include <iostream>
 
 namespace engin {
 
@@ -130,6 +131,22 @@ namespace engin {
 			glBindBuffer(GL_UNIFORM_BUFFER, getUniformBuffer(bufName));
 			glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
 			glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		}
+		static void unSetUniformData(const std::string& bufName, GLintptr offset, GLsizeiptr size = 0)
+		{
+			glBindBuffer(GL_UNIFORM_BUFFER, getUniformBuffer(bufName));
+			if (size == 0)
+			{
+				int32_t bsize;
+				glGetBufferParameteriv(GL_UNIFORM_BUFFER, GL_BUFFER_SIZE, &bsize);
+				size = bsize;
+			}
+			void* src = new float[size] {0};
+			glBufferSubData(GL_UNIFORM_BUFFER, offset, size, src);
+			glBindBuffer(GL_UNIFORM_BUFFER, 0);
+			delete[] src;
+				
+				
 		}
 	private:
 		void createProgram(const std::string& fileName);

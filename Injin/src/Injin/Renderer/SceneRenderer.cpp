@@ -49,13 +49,19 @@ void engin::SceneRenderer::render(SceneGraph* scene)
 		, &scene->m_scenePerspectiveCamera->getViewProjMat()[0].x);
 	m_shaderProgram[2].bindProgram();
 	m_shaderProgram[2].setUniValuefV("camPos", scene->m_scenePerspectiveCamera->getPos(), 3);
+	uint16_t count = 0;
 	for (auto& entt : scene->m_enttList)
 	{
 		std::string& tmpTag = entt.getComponent<TagComponent>()->m_tagName;
 		if (tmpTag == "Light")
 		{
 			processLight(entt);
+			count++;
 		}
+	}
+	if (count <= 0)
+	{
+		shader::unSetUniformData("Light", 0);
 	}
 	scene->m_sceneFrame->bindFrameBuffer();
 	FrameBuffers::clrBuffer({ 0.2f,0.2f,0.5f,1.f });
@@ -100,13 +106,17 @@ void engin::SceneRenderer::processEntt(ShaderProgram& prog, engin::Yentt& entt)
 {
 	typedef ShaderProgram shader;
 	
+	auto tranComp = entt.getComponent<TransformComponent>();
+	if (tranComp)
+	{
+		shader::setUniformBufferData("Matrices", 0, sizeof(glm::mat4)
+			, &tranComp->getModelMatrix()[0].x);
+		shader::setUniformBufferData("Matrices", sizeof(glm::mat4) * 2, sizeof(glm::mat4)
+			, &tranComp->getNormalMatrix()[0].x);
+		
+	}
 
-	shader::setUniformBufferData("Matrices", 0, sizeof(glm::mat4)
-		, &entt.getComponent<TransformComponent>()->getModelMatrix()[0].x);
-	shader::setUniformBufferData("Matrices", sizeof(glm::mat4) * 2, sizeof(glm::mat4)
-		, &entt.getComponent<TransformComponent>()->getNormalMatrix()[0].x);
 	auto material = entt.getComponent<MaterialComponent>();
-
 	if (material && material->isTexture)
 	{
 		if (material->m_texMaterial.m_diffuse)
@@ -147,7 +157,8 @@ void engin::SceneRenderer::processEntt(ShaderProgram& prog, engin::Yentt& entt)
 	shader::setUniformBufferData("objMaterial", sizeof(glm::vec4) * 3, sizeof(bool)
 		, &material->isTexture);
 	
-	entt.getComponent<MeshComponent>()->m_meshData->drawMesh();
+	auto mesh = entt.getComponent<MeshComponent>();
+	if(mesh) mesh->m_meshData->drawMesh();
 
 	
 }
