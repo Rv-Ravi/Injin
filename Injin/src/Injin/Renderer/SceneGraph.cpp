@@ -198,6 +198,7 @@ void engin::SceneGraph::ImGuiWindows()
 	}
 	ImGui::End();
 
+	ImGui::ShowDemoWindow();
 
 	ImGui::Begin("Properties");
 	if (currentYentt)
@@ -219,6 +220,7 @@ void engin::SceneGraph::loadModelGui()
 {
 	using namespace std::filesystem;
 	static path mainPath = current_path(), currentPath = mainPath / "assets";
+	static std::vector<path> filename = {currentPath };
 	if (ImGui::Button("Import Model"))
 		ImGui::OpenPopup("File Explorer");
 	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
@@ -233,19 +235,37 @@ void engin::SceneGraph::loadModelGui()
 			if (currentPath.parent_path() != mainPath)
 				currentPath = currentPath.parent_path();
 		}
+		ImGui::SameLine(0);
+		for (uint32_t i = 0;i < filename.size();i++)
+		{
+			if (ImGui::SmallButton(filename[i].filename().string().c_str()))
+			{
+				currentPath = filename[i];
+				if(i != filename.size() - 1)
+					filename.erase(filename.begin() + i + 1,filename.end());
+
+			}
+			if(i != filename.size() - 1)ImGui::SameLine(0);
+		}
 		ImGui::Separator();
 
 		for (auto& val : directory_iterator{ currentPath })
 		{
-			auto tmpPath = path(val).filename();
+			auto tmpPath = val.path().filename();
 			if (val.is_directory())
 			{
-				if(ImGui::Button(tmpPath.string().c_str()))
+				if (ImGui::Button(tmpPath.string().c_str()))
+				{
 					currentPath /= tmpPath;
+					filename.push_back(val.path());
+					ImGui::OpenPopup("File Explorer");
+				}
+					
 			}
 			else {
 				if (ImGui::Button(tmpPath.string().c_str()))
 					fileName = tmpPath.string();
+					ImGui::OpenPopup("File Explorer");
 			}
 		}
 
@@ -253,11 +273,12 @@ void engin::SceneGraph::loadModelGui()
 		if (ImGui::Button("OK", ImVec2(120, 0))) { 
 			fileName = (currentPath / fileName).string();
 			loadModel(fileName);
+			fileName.clear();
 			ImGui::CloseCurrentPopup(); 
 		}
 		ImGui::SetItemDefaultFocus();
 		ImGui::SameLine();
-		if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+		if (ImGui::Button("Cancel", ImVec2(120, 0))) { fileName.clear(); ImGui::CloseCurrentPopup(); }
 		ImGui::EndPopup();
 	}
 }
