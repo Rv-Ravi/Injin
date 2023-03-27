@@ -198,8 +198,6 @@ void engin::SceneGraph::ImGuiWindows()
 	}
 	ImGui::End();
 
-	ImGui::ShowDemoWindow();
-
 	ImGui::Begin("Properties");
 	if (currentYentt)
 		currentYentt->compManipulation();
