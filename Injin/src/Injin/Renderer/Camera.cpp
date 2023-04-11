@@ -74,6 +74,12 @@ void engin::PerspectiveCamera::mvCam(const WindowGL& window, float dtime)
 {
 	rotateCam(window, dtime);
 	glfwGetFramebufferSize(window.getWindow(), (int*)&m_width, (int*)&m_height);
+
+	if(m_width == 0 || m_height == 0)
+	{
+		m_width = 16.f; m_height = 9.f;
+	}
+
 	if (window.getKeyState(GLFW_KEY_RIGHT_SHIFT) == 1 && window.getKeyState(GLFW_KEY_UP) == 1)
 		m_camSpeed = lerp(dtime, m_camSpeed, m_camMaxVel * m_camY);
 	else if (window.getKeyState(GLFW_KEY_RIGHT_SHIFT) == 1 && window.getKeyState(GLFW_KEY_DOWN) == 1)
