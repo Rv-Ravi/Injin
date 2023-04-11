@@ -39,6 +39,8 @@ namespace engin
 		void delTexture();
 		static void clearTexture();
 
+		static void processCubeMapTex(std::string* material);
+
 	private:
 		void getTextureFile(const std::string& texture);
 		void processTexture(const std::string& texture);

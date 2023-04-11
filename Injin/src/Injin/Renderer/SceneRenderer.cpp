@@ -68,6 +68,9 @@ void engin::SceneRenderer::render(SceneGraph* scene)
 
 	}
 
+	SkyBox::getskyBox().drawSkyBox(scene->m_scenePerspectiveCamera->getViewMat(),
+		scene->m_scenePerspectiveCamera->getProjMat());
+
 	FrameBuffers::unbindFrameBuffer();
 	Texture::unBindTexture();
 	shader::unbindProgram();
@@ -143,7 +146,7 @@ void engin::SceneRenderer::processEntt(ShaderProgram& prog, engin::Yentt& entt)
 			, &material->isTexture);
 
 	}
-	
+
 	auto mesh = entt.getComponent<MeshComponent>();
 	if(mesh) mesh->m_meshData->drawMesh();
 

@@ -65,6 +65,28 @@ void engin::Texture::clearTexture()
 	std::cout << "All done\n";
 }
 
+void engin::Texture::processCubeMapTex(std::string* material)
+{
+	for (uint16_t i = 0; i < 6; i++)
+	{
+		int32_t iWidth, iHeight, iNoc;
+		stbi_set_flip_vertically_on_load(0);
+		unsigned char* imgData = stbi_load(material[i].c_str(), &iWidth, &iHeight, &iNoc, 0);
+
+		if (imgData)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, iWidth, iHeight, 0,
+				iNoc < 4 ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, imgData);
+		}
+		else
+		{
+			std::cerr << "Unable to load the image file.\n";
+		}
+		stbi_image_free(imgData);
+	}
+
+}
+
 void engin::Texture::getTextureFile(const std::string& texture)
 {
 	int32_t iWidth, iHeight, iNoc;

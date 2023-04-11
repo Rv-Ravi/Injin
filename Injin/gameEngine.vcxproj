@@ -480,6 +480,7 @@
     <ClInclude Include="src\Injin\Renderer\SceneGraph.h" />
     <ClInclude Include="src\Injin\Renderer\ShaderProgram.h" />
     <ClInclude Include="src\Injin\Renderer\Yentt.h" />
+    <ClInclude Include="src\Injin\Skybox\skyBox.h" />
     <ClInclude Include="src\Injin\Windows\WindowGL.h" />
     <ClInclude Include="src\Injin\Renderer\Texture.h" />
   </ItemGroup>
@@ -503,6 +504,7 @@
     <ClCompile Include="src\Injin\Renderer\SceneGraph.cpp" />
     <ClCompile Include="src\Injin\Renderer\SceneRenderer.cpp" />
     <ClCompile Include="src\Injin\Renderer\ShaderProgram.cpp" />
+    <ClCompile Include="src\Injin\Skybox\skyBox.cpp" />
     <ClCompile Include="src\Injin\Windows\WindowGL.cpp" />
     <ClCompile Include="src\Injin\Renderer\Texture.cpp" />
   </ItemGroup>

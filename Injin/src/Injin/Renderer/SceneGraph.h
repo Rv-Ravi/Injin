@@ -7,6 +7,8 @@
 #include <filesystem>
 #include <unordered_map>
 #include "FrameBuffers.h"
+#include "../Skybox/skyBox.h"
+
 namespace engin {
 
 	class SceneGraph
